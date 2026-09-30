@@ -34,13 +34,15 @@ const satellite=L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/service
 const terrain=L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",{maxZoom:17,attribution:"© OpenTopoMap contributors"});
 const street=L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap contributors"});
 
+const stormOverlays=[];
 const stormAreas=[
   [[30.25,78.9],[30.8,79.1],[30.65,79.65],[30.1,79.5]],
   [[28.0,93.0],[27.7,93.8],[27.2,93.55],[27.45,92.8]],
   [[27.0,88.2],[27.5,88.4],[27.6,89.0],[27.1,89.1]]
 ];
 stormAreas.forEach(function(points,i){
-  L.polygon(points,{color:"transparent",fillColor:i===0?"#f36b32":"#f4c23e",fillOpacity:.28,weight:0}).addTo(map);
+  stormOverlays.push(L.polygon(points,{color:"transparent",fillColor:i===0?"#f36b32":"#f4c23e",fillOpacity:.28,weight:0}));
+  stormOverlays[stormOverlays.length-1].addTo(map);
 });
 
 const labelData=[
@@ -57,13 +59,24 @@ labelData.forEach(function(x){
 });
 
 const marker=L.marker([locations.chamoli.lat,locations.chamoli.lng]).addTo(map);
+marker.bindTooltip(locations.chamoli.name,{direction:"top",offset:[0,-8]});
+
+function byId(id){
+  return document.getElementById(id);
+}
+
+function setText(id,value){
+  const el=byId(id);
+  if(el)el.textContent=value;
+}
 
 function riskClass(value){
-  const v=value.toLowerCase().replace(/\s+/g,"-");
+  const v=String(value||"").toLowerCase().replace(/\s+/g,"-");
   if(v==="low")return "low";
   if(v==="moderate")return "moderate";
   if(v==="high")return "high";
-  return "very-high";
+  if(v==="very-high")return "very-high";
+  return "";
 }
 
 function findLocation(q){
@@ -79,43 +92,71 @@ function findLocation(q){
 function selectLocation(key){
   const x=locations[key];
   if(!x)return;
-  document.getElementById("selectedLocation").textContent=x.name;
-  document.getElementById("coordinates").textContent=x.coords;
-  document.getElementById("thunderstormRisk").textContent=x.risk.thunderstorm;
-  document.getElementById("thunderstormRisk").className=riskClass(x.risk.thunderstorm);
-  document.getElementById("hailstormRisk").textContent=x.risk.hailstorm;
-  document.getElementById("hailstormRisk").className=riskClass(x.risk.hailstorm);
-  document.getElementById("cloudburstRisk").textContent=x.risk.cloudburst;
-  document.getElementById("cloudburstRisk").className=riskClass(x.risk.cloudburst);
-  document.getElementById("validityTime").textContent="("+x.validity+")";
-  document.getElementById("downburstVelocity").textContent=x.params.downburst;
-  document.getElementById("lightningStrikeIntensity").textContent=x.params.strike;
-  document.getElementById("lightningFlashRate").textContent=x.params.flash;
-  document.getElementById("lightningDensity").textContent=x.params.density;
-  document.getElementById("temperature").textContent=x.params.temperature;
-  document.getElementById("humidity").textContent=x.params.humidity;
-  document.getElementById("cloudDirection").textContent=x.params.cloudDirection;
-  document.getElementById("cloudDensity").textContent=x.params.cloudDensity;
-  document.getElementById("cloudVelocity").textContent=x.params.cloudVelocity;
-  document.getElementById("cloudType").textContent=x.params.cloudType;
-  document.getElementById("windSpeed").textContent=x.params.windSpeed;
-  document.getElementById("windDirection").textContent=x.params.windDirection;
-  document.getElementById("monsoonStatus").textContent=x.params.monsoon;
-  document.getElementById("forecastGrid").innerHTML=x.forecast.map(function(item){
-    return '<div class="forecast-item"><div class="time">'+item[0]+'</div><div class="wx">'+item[1]+'</div><span class="level '+item[3]+'">'+item[2]+'</span></div>';
-  }).join("");
+
+  setText("selectedLocation",x.name);
+  setText("coordinates",x.coords);
+  setText("thunderstormRisk",x.risk.thunderstorm);
+  setText("hailstormRisk",x.risk.hailstorm);
+  setText("cloudburstRisk",x.risk.cloudburst);
+
+  const thunderstorm=byId("thunderstormRisk");
+  const hailstorm=byId("hailstormRisk");
+  const cloudburst=byId("cloudburstRisk");
+  if(thunderstorm)thunderstorm.className=riskClass(x.risk.thunderstorm);
+  if(hailstorm)hailstorm.className=riskClass(x.risk.hailstorm);
+  if(cloudburst)cloudburst.className=riskClass(x.risk.cloudburst);
+
+  setText("validityTime","("+x.validity+")");
+  setText("downburstVelocity",x.params.downburst);
+  setText("lightningStrikeIntensity",x.params.strike);
+  setText("lightningFlashRate",x.params.flash);
+  setText("lightningDensity",x.params.density);
+  setText("temperature",x.params.temperature);
+  setText("humidity",x.params.humidity);
+  setText("cloudDirection",x.params.cloudDirection);
+  setText("cloudDensity",x.params.cloudDensity);
+  setText("cloudVelocity",x.params.cloudVelocity);
+  setText("cloudType",x.params.cloudType);
+  setText("windSpeed",x.params.windSpeed);
+  setText("windDirection",x.params.windDirection);
+  setText("monsoonStatus",x.params.monsoon);
+
+  const forecastGrid=byId("forecastGrid");
+  if(forecastGrid){
+    forecastGrid.innerHTML=x.forecast.map(function(item){
+      return '<div class="forecast-item"><div class="time">'+item[0]+'</div><div class="wx">'+item[1]+'</div><span class="level '+item[3]+'">'+item[2]+'</span></div>';
+    }).join("");
+  }
+
+  const search=byId("locationSearch");
+  if(search){
+    search.value=x.name;
+    search.setCustomValidity("");
+  }
+
   marker.setLatLng([x.lat,x.lng]);
+  marker.setTooltipContent(x.name);
   map.flyTo([x.lat,x.lng],8,{duration:1});
+  setTimeout(function(){map.invalidateSize();},250);
 }
 
 function searchDashboard(){
-  const key=findLocation(document.getElementById("locationSearch").value);
-  if(key)selectLocation(key);
+  const input=byId("locationSearch");
+  const key=findLocation(input ? input.value : "");
+  if(key){
+    selectLocation(key);
+  }else if(input && input.value.trim()){
+    input.setCustomValidity("Supported demo locations: Chamoli, Shimla, Gangtok, Itanagar.");
+    input.reportValidity();
+  }
 }
 
-document.getElementById("searchBtn").onclick=searchDashboard;
-document.getElementById("locationSearch").addEventListener("keydown",function(e){
-  if(e.key==="Enter")searchDashboard();
+byId("searchBtn").onclick=searchDashboard;
+byId("locationSearch").addEventListener("keydown",function(e){
+  if(e.key==="Enter"){
+    e.preventDefault();
+    searchDashboard();
+  }
 });
 
 document.querySelectorAll(".tab").forEach(function(btn){
@@ -123,6 +164,7 @@ document.querySelectorAll(".tab").forEach(function(btn){
     document.querySelectorAll(".tab").forEach(function(b){b.classList.remove("active")});
     btn.classList.add("active");
     const mode=btn.dataset.mode;
+
     if(mode==="nowcast"||mode==="satellite"){
       if(!map.hasLayer(satellite))map.addLayer(satellite);
       if(map.hasLayer(terrain))map.removeLayer(terrain);
@@ -132,6 +174,14 @@ document.querySelectorAll(".tab").forEach(function(btn){
       if(map.hasLayer(satellite))map.removeLayer(satellite);
       if(map.hasLayer(terrain))map.removeLayer(terrain);
     }
+
+    stormOverlays.forEach(function(layer){
+      const shouldShow=mode==="nowcast";
+      const has=map.hasLayer(layer);
+      if(shouldShow&&!has)map.addLayer(layer);
+      if(!shouldShow&&has)map.removeLayer(layer);
+    });
+    setTimeout(function(){map.invalidateSize();},100);
   };
 });
 

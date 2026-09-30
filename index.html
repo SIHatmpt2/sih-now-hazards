@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SkyIntel — Convective Nowcasting</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+</head>
+<body>
+<header class="topbar">
+<div class="brand"><div class="brand-icon">⚡</div><div><h1>Sky<span>Intel</span></h1><p>Convective Scale Nowcasting for<br>Thunderstorms, Hail &amp; Cloudbursts (06 hr)</p></div></div>
+<div class="search"><span>⌖</span><input id="locationSearch" placeholder="Search location (e.g. Shimla, Tehri, Itanagar)"><button id="searchBtn">⌕</button></div>
+</header>
+<main class="dashboard">
+<section class="map-card"><div id="map"></div>
+<div class="risk-legend"><strong>Convective Nowcast (Next 6 Hours)</strong><div class="risk-bar"></div><div class="legend-labels"><span>Low</span><span>Moderate</span><span>High</span><span>Very High</span></div></div>
+<div class="map-modes"><button class="mode active" data-mode="satellite">Satellite</button><button class="mode" data-mode="terrain">Terrain</button><button class="mode" data-mode="radar">Radar</button></div>
+</section>
+<aside class="side">
+<section class="panel location-panel"><div class="eyebrow">⌖ &nbsp; Selected Location</div><h2 id="selectedLocation">Chamoli, Uttarakhand</h2><p id="coordinates">30.41° N, 79.32° E</p>
+<div class="risk-grid">
+<div class="risk-box"><div class="weather-icon">☁⚡</div><span>Thunderstorm<br>Risk</span><b class="moderate">Moderate</b></div>
+<div class="risk-box"><div class="weather-icon">☁❄</div><span>Hailstorm<br>Risk</span><b class="low">Low</b></div>
+<div class="risk-box"><div class="weather-icon">☁☔</div><span>Cloudburst<br>Risk</span><b class="high">High</b></div>
+</div>
+<div class="validity">◷ &nbsp; <strong>Valid for next 6 hours</strong><br><span>(29 Sep 2026, 02:30 PM – 08:30 PM)</span></div>
+</section>
+<section class="panel parameters"><h3>▥ &nbsp; Key Parameters (Current)</h3>
+<div class="param"><span>Cloud Top Temperature</span><b>-62 °C</b></div><div class="param"><span>Cloud Top Height</span><b>15.2 km</b></div><div class="param"><span>Precipitation Intensity</span><b>High</b></div><div class="param"><span>Convective Cloud Type</span><b>Deep Convective</b></div><div class="param"><span>Wind Speed (at 500 hPa)</span><b>42 km/h</b></div><div class="param"><span>Wind Direction</span><b>NW</b></div>
+</section></aside>
+<section class="forecast panel"><div class="forecast-title"><div class="forecast-heading"><span class="clock">◷</span><div><h3>6-Hour Nowcast</h3><p>Convective weather risk for the next 6 hours</p></div></div><div class="mini-legend"><span>● Low</span><span>● Moderate</span><span>● High</span><span>● Very High</span></div></div><div class="forecast-grid" id="forecastGrid"></div></section>
+</main>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="script.js"></script>
+</body></html>

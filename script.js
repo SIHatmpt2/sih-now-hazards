@@ -9,21 +9,21 @@ const locations={
   shimla:{
     name:"Shimla, Himachal Pradesh",coords:"31.10° N, 77.17° E",lat:31.10,lng:77.17,
     risk:{thunderstorm:"High",hailstorm:"Moderate",cloudburst:"Moderate"},
-    params:{downburst:"68 km/h",strike:"High",flash:"18 flashes/min",density:"7.4 flashes/km²",temperature:"21 °C",humidity:"78%",cloudDirection:"NW",cloudDensity:"82%",cloudVelocity:"42 km/h",cloudType:"Deep Convective",windSpeed:"42 km/h",windDirection:"NW"},
+    params:{downburst:"54 km/h",strike:"Moderate",flash:"11 flashes/min",density:"4.9 flashes/km²",temperature:"18 °C",humidity:"72%",cloudDirection:"W",cloudDensity:"69%",cloudVelocity:"48 km/h",cloudType:"Cumulonimbus",windSpeed:"48 km/h",windDirection:"W"},
     validity:"29 Sep 2026, 03:00 PM – 09:00 PM",
     forecast:[["03:00 – 04:00 PM","⛈️","Moderate","moderate"],["04:00 – 05:00 PM","⛈️","High","high"],["05:00 – 06:00 PM","⛈️","High","high"],["06:00 – 07:00 PM","🌧️","High","high"],["07:00 – 08:00 PM","🌧️","Moderate","moderate"],["08:00 – 09:00 PM","☁️","Low","low"]]
   },
   gangtok:{
     name:"Gangtok, Sikkim",coords:"27.33° N, 88.61° E",lat:27.33,lng:88.61,
     risk:{thunderstorm:"Moderate",hailstorm:"High",cloudburst:"High"},
-    params:{downburst:"68 km/h",strike:"High",flash:"18 flashes/min",density:"7.4 flashes/km²",temperature:"21 °C",humidity:"78%",cloudDirection:"NW",cloudDensity:"82%",cloudVelocity:"42 km/h",cloudType:"Deep Convective",windSpeed:"42 km/h",windDirection:"NW"},
+    params:{downburst:"73 km/h",strike:"Very High",flash:"24 flashes/min",density:"9.1 flashes/km²",temperature:"17 °C",humidity:"86%",cloudDirection:"SW",cloudDensity:"91%",cloudVelocity:"36 km/h",cloudType:"Overshooting Top",windSpeed:"36 km/h",windDirection:"SW"},
     validity:"29 Sep 2026, 02:45 PM – 08:45 PM",
     forecast:[["02:45 – 03:45 PM","🌧️","Moderate","moderate"],["03:45 – 04:45 PM","⛈️","High","high"],["04:45 – 05:45 PM","⛈️","Very High","very-high"],["05:45 – 06:45 PM","⛈️","High","high"],["06:45 – 07:45 PM","🌧️","High","high"],["07:45 – 08:45 PM","🌧️","Moderate","moderate"]]
   },
   itanagar:{
     name:"Itanagar, Arunachal Pradesh",coords:"27.08° N, 93.62° E",lat:27.08,lng:93.62,
     risk:{thunderstorm:"High",hailstorm:"Low",cloudburst:"Very High"},
-    params:{downburst:"68 km/h",strike:"High",flash:"18 flashes/min",density:"7.4 flashes/km²",temperature:"21 °C",humidity:"78%",cloudDirection:"NW",cloudDensity:"82%",cloudVelocity:"42 km/h",cloudType:"Deep Convective",windSpeed:"42 km/h",windDirection:"NW"},
+    params:{downburst:"61 km/h",strike:"High",flash:"21 flashes/min",density:"8.2 flashes/km²",temperature:"24 °C",humidity:"84%",cloudDirection:"E",cloudDensity:"88%",cloudVelocity:"31 km/h",cloudType:"Deep Convective",windSpeed:"31 km/h",windDirection:"E"},
     validity:"29 Sep 2026, 03:15 PM – 09:15 PM",
     forecast:[["03:15 – 04:15 PM","🌧️","Moderate","moderate"],["04:15 – 05:15 PM","⛈️","High","high"],["05:15 – 06:15 PM","⛈️","Very High","very-high"],["06:15 – 07:15 PM","⛈️","Very High","very-high"],["07:15 – 08:15 PM","🌧️","High","high"],["08:15 – 09:15 PM","🌧️","Moderate","moderate"]]
   }

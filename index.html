@@ -11,7 +11,13 @@
   <div class="brand"><img src="logo.png" alt="SkyIntel"></div>
   <div class="header-search">
     <span class="search-icon">⌕</span>
-    <input id="landingSearch" placeholder="Search location (e.g. Shimla, Tehri, Itanagar)" autocomplete="off">
+    <input id="landingSearch" list="locationOptions" placeholder="Search location (e.g. Shimla, Tehri, Itanagar)" autocomplete="off">
+    <datalist id="locationOptions">
+      <option value="Chamoli, Uttarakhand"></option>
+      <option value="Shimla, Himachal Pradesh"></option>
+      <option value="Gangtok, Sikkim"></option>
+      <option value="Itanagar, Arunachal Pradesh"></option>
+    </datalist>
     <button id="landingSearchBtn" aria-label="Search">↵</button>
   </div>
   <div class="nav-settings">⚙</div>
@@ -60,7 +66,7 @@
 const locations={
   chamoli:{name:"Chamoli, Uttarakhand",lat:30.41,lng:79.32},
   shimla:{name:"Shimla, Himachal Pradesh",lat:31.10,lng:77.17},
-  tehri:{name:"Tehri, Uttarakhand",lat:30.38,lng:78.48},
+  gangtok:{name:"Gangtok, Sikkim",lat:27.33,lng:88.61},
   itanagar:{name:"Itanagar, Arunachal Pradesh",lat:27.08,lng:93.62}
 };
 const map=L.map("landingMap",{zoomControl:true}).setView([29.8,82.4],5.7);
@@ -69,7 +75,7 @@ L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/
 const stormAreas=[
  [[30.25,78.9],[30.8,79.1],[30.65,79.65],[30.1,79.5]],
  [[28.0,93.0],[27.7,93.8],[27.2,93.55],[27.45,92.8]],
- [[27.7,87.4],[28.2,87.8],[28.0,88.4],[27.5,88.0]]
+ [[27.0,88.2],[27.5,88.4],[27.6,89.0],[27.1,89.1]]
 ];
 stormAreas.forEach((p,i)=>L.polygon(p,{color:"transparent",fillColor:i===0?"#f36b32":"#f4c23e",fillOpacity:.28,weight:0}).addTo(map));
 
@@ -84,7 +90,12 @@ function goToDashboard(key){
 }
 function findLocation(q){
   q=q.trim().toLowerCase();
-  return Object.keys(locations).find(k=>q.includes(k)||locations[k].name.toLowerCase().includes(q)||locations[k].name.toLowerCase().split(",")[0]===q);
+  if(!q)return null;
+  return Object.keys(locations).find(k=>{
+    const name=locations[k].name.toLowerCase();
+    const city=name.split(",")[0].trim();
+    return k===q || city===q || name===q || name.includes(q) || q.includes(k);
+  });
 }
 function searchLanding(){
   const key=findLocation(document.getElementById("landingSearch").value);

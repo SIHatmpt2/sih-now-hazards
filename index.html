@@ -2,33 +2,56 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>SkyIntel — Convective Nowcasting</title>
+<title>SkyIntel — Convective Scale Nowcasting</title>
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 </head>
 <body>
 <header class="topbar">
-<div class="brand"><div class="brand-icon">⚡</div><div><h1>Sky<span>Intel</span></h1><p>Convective Scale Nowcasting for<br>Thunderstorms, Hail &amp; Cloudbursts (06 hr)</p></div></div>
-<div class="search"><span>⌖</span><input id="locationSearch" placeholder="Search location (e.g. Shimla, Tehri, Itanagar)"><button id="searchBtn">⌕</button></div>
+  <div class="brand">
+    <div class="brand-mark"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M18 42c-7-1-10-7-7-13 2-5 7-8 12-7 3-8 12-12 20-9 6 2 10 7 10 14 5 1 8 5 8 10 0 6-5 11-11 11H20" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/><path d="M35 31l-7 12h8l-5 13 12-17h-8z" fill="#72a9f2"/></svg></div>
+    <div><h1>Sky<span>Intel</span></h1><p>Convective Nowcasting for<br>Thunderstorms, Hail &amp; Cloudbursts</p></div>
+  </div>
+  <div class="header-actions">
+    <div class="search"><span>⌕</span><input id="locationSearch" placeholder="Search location (e.g. Shimla, Tehri, Itanagar)"><button id="searchBtn">⌕</button></div>
+    <button class="settings" aria-label="Settings">⚙</button>
+  </div>
 </header>
-<main class="dashboard">
-<section class="map-card"><div id="map"></div>
-<div class="risk-legend"><strong>Convective Nowcast (Next 6 Hours)</strong><div class="risk-bar"></div><div class="legend-labels"><span>Low</span><span>Moderate</span><span>High</span><span>Very High</span></div></div>
-<div class="map-modes"><button class="mode active" data-mode="satellite">Satellite</button><button class="mode" data-mode="terrain">Terrain</button><button class="mode" data-mode="radar">Radar</button></div>
+
+<main>
+<section class="hero">
+  <div><h2>Convective Scale Nowcasting<br>for Thunderstorms, Hail &amp; Cloudbursts <em>(06 hr)</em></h2><p>Real-time predictions and early warnings for convective weather events in India's hilly regions.</p></div>
+  <div class="updated"><span class="update-icon">◷</span><div><small>Last Updated</small><strong>29 Sep 2026, 02:30 PM</strong></div><b>● Live</b></div>
 </section>
+
+<div class="dashboard">
+<section class="map-card">
+  <div id="map"></div>
+  <div class="map-tabs"><button class="tab active" data-mode="nowcast">Nowcast Map</button><button class="tab" data-mode="satellite">Satellite View</button><button class="tab" data-mode="radar">Radar View</button></div>
+  <div class="risk-legend"><strong>Convective Risk <small>(Next 6 Hours)</small><span>→</span></strong><div class="risk-bar"></div><div class="legend-labels"><span>Low</span><span>Moderate</span><span>High</span><span>Very High</span></div></div>
+</section>
+
 <aside class="side">
-<section class="panel location-panel"><div class="eyebrow">⌖ &nbsp; Selected Location</div><h2 id="selectedLocation">Chamoli, Uttarakhand</h2><p id="coordinates">30.41° N, 79.32° E</p>
-<div class="risk-grid">
-<div class="risk-box"><div class="weather-icon">☁⚡</div><span>Thunderstorm<br>Risk</span><b class="moderate">Moderate</b></div>
-<div class="risk-box"><div class="weather-icon">☁❄</div><span>Hailstorm<br>Risk</span><b class="low">Low</b></div>
-<div class="risk-box"><div class="weather-icon">☁☔</div><span>Cloudburst<br>Risk</span><b class="high">High</b></div>
-</div>
-<div class="validity">◷ &nbsp; <strong>Valid for next 6 hours</strong><br><span>(29 Sep 2026, 02:30 PM – 08:30 PM)</span></div>
+<section class="panel location-panel">
+  <div class="panel-head"><div class="eyebrow">⌖ &nbsp; Selected Location</div><a href="#" onclick="return false">View Details →</a></div>
+  <h2 id="selectedLocation">Chamoli, Uttarakhand</h2><p id="coordinates">30.41° N, 79.32° E</p>
+  <div class="risk-grid">
+    <div class="risk-box"><div class="weather-icon">☁⚡</div><span>Thunderstorm<br>Risk</span><b class="moderate">Moderate</b></div>
+    <div class="risk-box"><div class="weather-icon">☁❄</div><span>Hailstorm<br>Risk</span><b class="low">Low</b></div>
+    <div class="risk-box"><div class="weather-icon">☁☔</div><span>Cloudburst<br>Risk</span><b class="high">High</b></div>
+  </div>
+  <div class="validity">◷ &nbsp; <strong>Valid for next 6 hours</strong><br><span>(29 Sep 2026, 02:30 PM – 08:30 PM)</span><i>ⓘ</i></div>
 </section>
 <section class="panel parameters"><h3>▥ &nbsp; Key Parameters (Current)</h3>
 <div class="param"><span>Cloud Top Temperature</span><b>-62 °C</b></div><div class="param"><span>Cloud Top Height</span><b>15.2 km</b></div><div class="param"><span>Precipitation Intensity</span><b>High</b></div><div class="param"><span>Convective Cloud Type</span><b>Deep Convective</b></div><div class="param"><span>Wind Speed (at 500 hPa)</span><b>42 km/h</b></div><div class="param"><span>Wind Direction</span><b>NW</b></div>
-</section></aside>
-<section class="forecast panel"><div class="forecast-title"><div class="forecast-heading"><span class="clock">◷</span><div><h3>6-Hour Nowcast</h3><p>Convective weather risk for the next 6 hours</p></div></div><div class="mini-legend"><span>● Low</span><span>● Moderate</span><span>● High</span><span>● Very High</span></div></div><div class="forecast-grid" id="forecastGrid"></div></section>
+</section>
+</aside>
+
+<section class="forecast panel">
+  <div class="forecast-title"><div class="forecast-heading"><span class="clock">◷</span><div><h3>6-Hour Nowcast</h3><p>Convective weather risk for the next 6 hours</p></div></div><div class="mini-legend"><span>● Low</span><span>● Moderate</span><span>● High</span><span>● Very High</span></div></div>
+  <div class="forecast-grid" id="forecastGrid"></div>
+</section>
+</div>
 </main>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="script.js"></script>
 </body></html>

@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>SkyIntel — Convective Scale Nowcasting</title>
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
@@ -9,19 +10,38 @@
 <body>
 <header class="topbar">
   <div class="brand">
-    <div class="brand-mark"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M18 42c-7-1-10-7-7-13 2-5 7-8 12-7 3-8 12-12 20-9 6 2 10 7 10 14 5 1 8 5 8 10 0 6-5 11-11 11H20" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/><path d="M35 31l-7 12h8l-5 13 12-17h-8z" fill="#72a9f2"/></svg></div>
+    <div class="brand-mark" aria-hidden="true">
+      <svg viewBox="0 0 64 64">
+        <path d="M15.5 43.5C9.5 42.7 7 37.2 9.7 32.1c2-3.8 5.8-6.1 10-5.9C20.9 18.8 27.3 13 35 13c7.1 0 13 4.9 14.8 11.6 6.2.2 11.2 5.1 11.2 11.4 0 6.5-5.2 11.7-11.7 11.7H17.5c-.7 0-1.4-.1-2-.2Z" fill="#fff"/>
+        <path d="M35.8 20.8 25.5 36.5h7.7l-4.1 13.7 15.2-20.1h-8.2l5.1-9.3Z" fill="#4e86dc"/>
+        <circle cx="14.5" cy="50.5" r="2.3" fill="#78a9ee"/>
+      </svg>
+    </div>
     <div><h1>Sky<span>Intel</span></h1><p>Convective Nowcasting for<br>Thunderstorms, Hail &amp; Cloudbursts</p></div>
   </div>
   <div class="header-actions">
-    <div class="search"><span>⌕</span><input id="locationSearch" placeholder="Search location (e.g. Shimla, Tehri, Itanagar)"><button id="searchBtn">⌕</button></div>
-    <button class="settings" aria-label="Settings">⚙</button>
+    <div class="search">
+      <svg viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.5"/><path d="m16 16 5 5"/></svg>
+      <input id="locationSearch" placeholder="Search location (e.g. Shimla, Tehri, Itanagar)">
+      <button id="searchBtn" aria-label="Search"></button>
+    </div>
+    <button class="settings" aria-label="Settings">
+      <svg viewBox="0 0 24 24"><path d="M12 8.3a3.7 3.7 0 1 0 0 7.4 3.7 3.7 0 0 0 0-7.4Z"/><path d="m19.2 13.3 1.4 1.1-1.7 3-1.7-.7a7.9 7.9 0 0 1-1.5.9l-.3 1.8h-3.5l-.3-1.8a7.9 7.9 0 0 1-1.5-.9l-1.7.7-1.7-3 1.4-1.1a7.6 7.6 0 0 1 0-2.6L6.7 9.6l1.7-3 1.7.7a7.9 7.9 0 0 1 1.5-.9l.3-1.8h3.5l.3 1.8a7.9 7.9 0 0 1 1.5.9l1.7-.7 1.7 3-1.4 1.1a7.6 7.6 0 0 1 0 2.6Z"/></svg>
+    </button>
   </div>
 </header>
 
 <main>
 <section class="hero">
-  <div><h2>Convective Scale Nowcasting<br>for Thunderstorms, Hail &amp; Cloudbursts <em>(06 hr)</em></h2><p>Real-time predictions and early warnings for convective weather events in India's hilly regions.</p></div>
-  <div class="updated"><span class="update-icon">◷</span><div><small>Last Updated</small><strong>29 Sep 2026, 02:30 PM</strong></div><b>● Live</b></div>
+  <div class="hero-copy">
+    <h2>Convective Scale Nowcasting<br>for Thunderstorms, Hail &amp; Cloudbursts <em>(06 hr)</em></h2>
+    <p>Real-time predictions and early warnings for convective weather events in India's hilly regions.</p>
+  </div>
+  <div class="updated">
+    <svg class="update-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3 2"/></svg>
+    <div><small>Last Updated</small><strong>29 Sep 2026, 02:30 PM</strong></div>
+    <b><i></i> Live</b>
+  </div>
 </section>
 
 <div class="dashboard">
@@ -33,22 +53,23 @@
 
 <aside class="side">
 <section class="panel location-panel">
-  <div class="panel-head"><div class="eyebrow">⌖ &nbsp; Selected Location</div><a href="#" onclick="return false">View Details →</a></div>
+  <div class="panel-head"><div class="eyebrow"><svg viewBox="0 0 24 24"><path d="M12 21s6.2-5.9 6.2-11A6.2 6.2 0 0 0 5.8 10c0 5.1 6.2 11 6.2 11Z"/><circle cx="12" cy="10" r="2.2"/></svg> Selected Location</div><a href="#" onclick="return false">View Details <span>→</span></a></div>
   <h2 id="selectedLocation">Chamoli, Uttarakhand</h2><p id="coordinates">30.41° N, 79.32° E</p>
   <div class="risk-grid">
-    <div class="risk-box"><div class="weather-icon">☁⚡</div><span>Thunderstorm<br>Risk</span><b class="moderate">Moderate</b></div>
-    <div class="risk-box"><div class="weather-icon">☁❄</div><span>Hailstorm<br>Risk</span><b class="low">Low</b></div>
-    <div class="risk-box"><div class="weather-icon">☁☔</div><span>Cloudburst<br>Risk</span><b class="high">High</b></div>
+    <div class="risk-box"><div class="weather-icon"><svg viewBox="0 0 32 32"><path d="M7 22h16.5a5.5 5.5 0 0 0 .5-11 7.5 7.5 0 0 0-14.5 2A4.5 4.5 0 0 0 7 22Z"/><path d="m17 15-3 5h3l-2 4 5-6h-3l2-3"/></svg></div><span>Thunderstorm<br>Risk</span><b class="moderate">Moderate</b></div>
+    <div class="risk-box"><div class="weather-icon"><svg viewBox="0 0 32 32"><path d="M7 20h18a5 5 0 0 0 0-10 7 7 0 0 0-13.5 2A4 4 0 0 0 7 20Z"/><path d="M11 23v3m5-3v3m5-3v3"/></svg></div><span>Hailstorm<br>Risk</span><b class="low">Low</b></div>
+    <div class="risk-box"><div class="weather-icon"><svg viewBox="0 0 32 32"><path d="M6 20h20a5 5 0 0 0 0-10 7 7 0 0 0-13.5 2A4 4 0 0 0 6 20Z"/><path d="M11 23l-2 4m7-4-2 4m7-4-2 4"/></svg></div><span>Cloudburst<br>Risk</span><b class="high">High</b></div>
   </div>
-  <div class="validity">◷ &nbsp; <strong>Valid for next 6 hours</strong><br><span>(29 Sep 2026, 02:30 PM – 08:30 PM)</span><i>ⓘ</i></div>
+  <div class="validity"><strong>Valid for next 6 hours</strong><br><span>(29 Sep 2026, 02:30 PM – 08:30 PM)</span><i>ⓘ</i></div>
 </section>
-<section class="panel parameters"><h3>▥ &nbsp; Key Parameters (Current)</h3>
+
+<section class="panel parameters"><h3><svg viewBox="0 0 24 24"><path d="M5 19V9m7 10V5m7 14v-7"/><path d="M3 19h4m3 0h4m3 0h4"/></svg> Key Parameters (Current)</h3>
 <div class="param"><span>Cloud Top Temperature</span><b>-62 °C</b></div><div class="param"><span>Cloud Top Height</span><b>15.2 km</b></div><div class="param"><span>Precipitation Intensity</span><b>High</b></div><div class="param"><span>Convective Cloud Type</span><b>Deep Convective</b></div><div class="param"><span>Wind Speed (at 500 hPa)</span><b>42 km/h</b></div><div class="param"><span>Wind Direction</span><b>NW</b></div>
 </section>
 </aside>
 
 <section class="forecast panel">
-  <div class="forecast-title"><div class="forecast-heading"><span class="clock">◷</span><div><h3>6-Hour Nowcast</h3><p>Convective weather risk for the next 6 hours</p></div></div><div class="mini-legend"><span>● Low</span><span>● Moderate</span><span>● High</span><span>● Very High</span></div></div>
+  <div class="forecast-title"><div class="forecast-heading"><svg class="clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><div><h3>6-Hour Nowcast</h3><p>Convective weather risk for the next 6 hours</p></div></div><div class="mini-legend"><span>● Low</span><span>● Moderate</span><span>● High</span><span>● Very High</span></div></div>
   <div class="forecast-grid" id="forecastGrid"></div>
 </section>
 </div>

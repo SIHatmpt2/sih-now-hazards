@@ -4,33 +4,24 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>SkyIntel — Convective Nowcasting</title>
 <link rel="stylesheet" href="landing.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 </head>
 <body>
-<header class="nav">
-  <div class="brand"><div class="logo"><svg viewBox="0 0 64 64"><path d="M18 42c-7-1-10-7-7-13 2-5 7-8 12-7 3-8 12-12 20-9 6 2 10 7 10 14 5 1 8 5 8 10 0 6-5 11-11 11H20" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/><path d="M35 31l-7 12h8l-5 13 12-17h-8z" fill="#72a9f2"/></svg></div><div><h1>Sky<span>Intel</span></h1><p>Convective Nowcasting for<br>Thunderstorms, Hail &amp; Cloudbursts</p></div></div>
-  <a class="nav-btn" href="dashboard.html">Open Dashboard</a>
-</header>
+<header class="nav"><div class="brand"><div class="logo"><svg viewBox="0 0 64 64"><path d="M18 42c-7-1-10-7-7-13 2-5 7-8 12-7 3-8 12-12 20-9 6 2 10 7 10 14 5 1 8 5 8 10 0 6-5 11-11 11H20" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/><path d="M35 31l-7 12h8l-5 13 12-17h-8z" fill="#72a9f2"/></svg></div><div><h1>Sky<span>Intel</span></h1><p>Convective Nowcasting for<br>Thunderstorms, Hail &amp; Cloudbursts</p></div></div><div class="nav-status"><span></span> Live Nowcast</div></header>
 <main>
-<section class="hero">
-  <div class="hero-content">
-    <p class="eyebrow">CONVECTIVE SCALE NOWCASTING</p>
-    <h2>Thunderstorms, Hail &amp;<br><span>Cloudbursts — next 06 hours.</span></h2>
-    <p class="description">A simple way to view convective weather risks and short-term nowcasts across India's hilly regions.</p>
-    <a class="primary" href="dashboard.html">View 6-Hour Nowcast <span>→</span></a>
-  </div>
-  <div class="hero-map">
-    <div class="map-label"><span class="dot"></span> Convective activity</div>
-    <div class="cloud cloud-one"></div><div class="cloud cloud-two"></div>
-    <div class="pulse"></div><div class="location-pin">●</div>
-    <div class="map-caption"><b>Himalayan Region</b><span>Live monitoring area</span></div>
-  </div>
-</section>
-<section class="intro">
-  <div><span>01</span><div><b>Monitor</b><p>Current convective activity</p></div></div>
-  <div><span>02</span><div><b>Assess</b><p>Thunderstorm · Hail · Cloudburst risk</p></div></div>
-  <div><span>03</span><div><b>Nowcast</b><p>Hour-by-hour outlook for 6 hours</p></div></div>
-</section>
+<section class="intro"><div class="intro-copy"><p class="eyebrow">CONVECTIVE SCALE NOWCASTING · 06 HR</p><h2>Thunderstorms, Hail &amp;<br><span>Cloudbursts</span></h2><p class="description">Short-term weather intelligence for India's hilly regions. Select a location to view its current convective risk and the next six hours.</p><div class="select-row"><div class="location-select"><span>⌖</span><select id="locationSelect"><option value="">Select a location</option><option value="chamoli">Chamoli, Uttarakhand</option><option value="shimla">Shimla, Himachal Pradesh</option><option value="tehri">Tehri, Uttarakhand</option><option value="itanagar">Itanagar, Arunachal Pradesh</option></select></div><button id="viewNowcast">View Nowcast →</button></div></div>
+<div class="overview"><div class="overview-top"><b>6-Hour Nowcast</b><span>Current overview</span></div><div class="risk-row"><div><i class="storm-icon">☁⚡</i><b>Thunderstorm</b></div><strong class="moderate">Moderate</strong></div><div class="risk-row"><div><i class="storm-icon">☁❄</i><b>Hailstorm</b></div><strong class="low">Low</strong></div><div class="risk-row"><div><i class="storm-icon">☁☔</i><b>Cloudburst</b></div><strong class="high">High</strong></div></div></section>
+<section class="map-section"><div class="section-heading"><div><h3>Select a location</h3><p>Choose a monitored area to open its 6-hour nowcast.</p></div><span>India · Himalayan &amp; Northeast regions</span></div><div class="map-wrap"><div id="landingMap"></div><div class="map-hint">Click a marker to view its nowcast</div></div></section>
 </main>
-<footer>SkyIntel · Convective Scale Nowcasting</footer>
-</body>
-</html>
+<footer>SkyIntel · Convective Scale Nowcasting for Thunderstorms, Hail &amp; Cloudbursts</footer>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const locations={chamoli:{name:"Chamoli, Uttarakhand",lat:30.41,lng:79.32},shimla:{name:"Shimla, Himachal Pradesh",lat:31.10,lng:77.17},tehri:{name:"Tehri, Uttarakhand",lat:30.38,lng:78.48},itanagar:{name:"Itanagar, Arunachal Pradesh",lat:27.08,lng:93.62}};
+const map=L.map("landingMap",{zoomControl:true}).setView([29.7,82.4],5.7);
+L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{maxZoom:18,attribution:"Tiles © Esri"}).addTo(map);
+function openLocation(key){if(locations[key])window.location.href="dashboard.html?location="+encodeURIComponent(key)}
+Object.entries(locations).forEach(([key,x])=>{const m=L.marker([x.lat,x.lng]).addTo(map);m.bindTooltip(x.name);m.on("click",()=>openLocation(key))});
+document.getElementById("viewNowcast").onclick=()=>{const key=document.getElementById("locationSelect").value;if(key)openLocation(key)};
+document.getElementById("locationSelect").onchange=e=>{if(e.target.value){const x=locations[e.target.value];map.flyTo([x.lat,x.lng],8,{duration:.7})}};
+</script>
+</body></html>

@@ -88,12 +88,19 @@ function selectLocation(key){
   document.getElementById("cloudburstRisk").textContent=x.risk.cloudburst;
   document.getElementById("cloudburstRisk").className=riskClass(x.risk.cloudburst);
   document.getElementById("validityTime").textContent="("+x.validity+")";
-  document.getElementById("cloudTemp").textContent=x.params.temp;
-  document.getElementById("cloudHeight").textContent=x.params.height;
-  document.getElementById("precipIntensity").textContent=x.params.precip;
-  document.getElementById("cloudType").textContent=x.params.cloud;
-  document.getElementById("windSpeed").textContent=x.params.wind;
-  document.getElementById("windDirection").textContent=x.params.direction;
+  document.getElementById("downburstVelocity").textContent=x.params.downburst;
+  document.getElementById("lightningStrikeIntensity").textContent=x.params.strike;
+  document.getElementById("lightningFlashRate").textContent=x.params.flash;
+  document.getElementById("lightningDensity").textContent=x.params.density;
+  document.getElementById("temperature").textContent=x.params.temperature;
+  document.getElementById("humidity").textContent=x.params.humidity;
+  document.getElementById("cloudDirection").textContent=x.params.cloudDirection;
+  document.getElementById("cloudDensity").textContent=x.params.cloudDensity;
+  document.getElementById("cloudVelocity").textContent=x.params.cloudVelocity;
+  document.getElementById("cloudType").textContent=x.params.cloudType;
+  document.getElementById("windSpeed").textContent=x.params.windSpeed;
+  document.getElementById("windDirection").textContent=x.params.windDirection;
+  document.getElementById("monsoonStatus").textContent=x.params.monsoon;
   document.getElementById("forecastGrid").innerHTML=x.forecast.map(function(item){
     return '<div class="forecast-item"><div class="time">'+item[0]+'</div><div class="wx">'+item[1]+'</div><span class="level '+item[3]+'">'+item[2]+'</span></div>';
   }).join("");

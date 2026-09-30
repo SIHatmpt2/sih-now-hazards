@@ -7,21 +7,97 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 </head>
 <body>
-<header class="nav"><div class="brand"><div class="logo"><svg viewBox="0 0 64 64"><path d="M18 42c-7-1-10-7-7-13 2-5 7-8 12-7 3-8 12-12 20-9 6 2 10 7 10 14 5 1 8 5 8 10 0 6-5 11-11 11H20" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/><path d="M35 31l-7 12h8l-5 13 12-17h-8z" fill="#72a9f2"/></svg></div><div><h1>Sky<span>Intel</span></h1><p>Convective Nowcasting for<br>Thunderstorms, Hail &amp; Cloudbursts</p></div></div><div class="nav-status"><span></span> Live Nowcast</div></header>
+<header class="nav">
+  <div class="brand"><img src="logo.png" alt="SkyIntel"></div>
+  <div class="header-search">
+    <span class="search-icon">⌕</span>
+    <input id="landingSearch" placeholder="Search location (e.g. Shimla, Tehri, Itanagar)" autocomplete="off">
+    <button id="landingSearchBtn" aria-label="Search">↵</button>
+  </div>
+  <div class="nav-settings">⚙</div>
+</header>
+
 <main>
-<section class="intro"><div class="intro-copy"><p class="eyebrow">CONVECTIVE SCALE NOWCASTING · 06 HR</p><h2>Thunderstorms, Hail &amp;<br><span>Cloudbursts</span></h2><p class="description">Short-term weather intelligence for India's hilly regions. Select a location to view its current convective risk and the next six hours.</p><div class="select-row"><div class="location-select"><span>⌖</span><select id="locationSelect"><option value="">Select a location</option><option value="chamoli">Chamoli, Uttarakhand</option><option value="shimla">Shimla, Himachal Pradesh</option><option value="tehri">Tehri, Uttarakhand</option><option value="itanagar">Itanagar, Arunachal Pradesh</option></select></div><button id="viewNowcast">View Nowcast →</button></div></div>
-<div class="overview"><div class="overview-top"><b>About SkyIntel</b><span>06-hour nowcasting</span></div><div class="about-copy"><p>SkyIntel is a convective weather intelligence platform for short-term nowcasts and early warnings for thunderstorms, hail and cloudbursts across India’s hilly regions.</p><div class="about-points"><span>06 HR Nowcasting</span><span>Hilly Region Focus</span><span>Early Warning</span></div></div></div>/section>
-<section class="map-section"><div class="section-heading"><div><h3>Select a location</h3><p>Choose a monitored area to open its 6-hour nowcast.</p></div><span>India · Himalayan &amp; Northeast regions</span></div><div class="map-wrap"><div id="landingMap"></div><div class="map-hint">Click a marker to view its nowcast</div></div></section>
+<section class="hero">
+  <div class="hero-copy">
+    <h1>Convective Scale Nowcasting<br>for Thunderstorms, Hail &amp; Cloudbursts <em>(06 hr)</em></h1>
+    <p>Real-time predictions and early warnings for convective weather events in India's hilly regions.</p>
+  </div>
+  <div class="updated">
+    <span class="clock-icon">◷</span>
+    <div><small>Last Updated</small><strong>29 Sep 2026, 02:30 PM</strong></div>
+    <b>● Live</b>
+  </div>
+</section>
+
+<section class="main-grid">
+  <div class="map-card">
+    <div id="landingMap"></div>
+    <div class="map-tabs"><span class="active">Nowcast Map</span><span>Satellite View</span><span>Radar View</span></div>
+    <div class="risk-legend"><strong>Convective Risk (Next 6 Hours) <span>→</span></strong><div class="risk-bar"></div><div class="legend-labels"><span>Low</span><span>Moderate</span><span>High</span><span>Very High</span></div></div>
+  </div>
+
+  <aside class="about-card">
+    <h2>▤ &nbsp;About SkyIntel</h2>
+    <div class="about-badge">⚡ &nbsp; 6-hour Nowcasting</div>
+    <p>SkyIntel provides real-time 0–6 hour convective weather nowcasting for thunderstorms, hail and cloudbursts across India's hilly regions, combining multi-source meteorological data with predictive analytics.</p>
+  </aside>
+</section>
+
+<section class="sources">
+  <h2>▤ &nbsp; Sources</h2>
+  <div class="source-grid">
+    <div class="source-card"><span>◈</span><b>INSAT-3D / INSAT-3DR<br>Satellite Data</b></div>
+    <div class="source-card"><span>♙</span><b>Doppler Weather<br>Radar (DWR)</b></div>
+    <div class="source-card"><span>ϟ</span><b>Lightning<br>Detection Data</b></div>
+    <div class="source-card"><span>⌁</span><b>Meteorological &amp;<br>Terrain Data</b></div>
+  </div>
+</section>
 </main>
-<footer>SkyIntel · Convective Scale Nowcasting for Thunderstorms, Hail &amp; Cloudbursts</footer>
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-const locations={chamoli:{name:"Chamoli, Uttarakhand",lat:30.41,lng:79.32},shimla:{name:"Shimla, Himachal Pradesh",lat:31.10,lng:77.17},tehri:{name:"Tehri, Uttarakhand",lat:30.38,lng:78.48},itanagar:{name:"Itanagar, Arunachal Pradesh",lat:27.08,lng:93.62}};
-const map=L.map("landingMap",{zoomControl:true}).setView([29.7,82.4],5.7);
+const locations={
+  chamoli:{name:"Chamoli, Uttarakhand",lat:30.41,lng:79.32},
+  shimla:{name:"Shimla, Himachal Pradesh",lat:31.10,lng:77.17},
+  tehri:{name:"Tehri, Uttarakhand",lat:30.38,lng:78.48},
+  itanagar:{name:"Itanagar, Arunachal Pradesh",lat:27.08,lng:93.62}
+};
+const map=L.map("landingMap",{zoomControl:true}).setView([29.8,82.4],5.7);
 L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{maxZoom:18,attribution:"Tiles © Esri"}).addTo(map);
-function openLocation(key){if(!locations[key])return;const x=locations[key];map.flyTo([x.lat,x.lng],8,{duration:.6});setTimeout(()=>window.location.href="dashboard.html?location="+encodeURIComponent(key),650)}
-Object.entries(locations).forEach(([key,x])=>{const m=L.marker([x.lat,x.lng]).addTo(map);m.bindTooltip(x.name);m.on("click",()=>openLocation(key))});
-document.getElementById("viewNowcast").onclick=()=>{const key=document.getElementById("locationSelect").value;if(key)openLocation(key)};
-document.getElementById("locationSelect").onchange=e=>{if(e.target.value){const x=locations[e.target.value];map.flyTo([x.lat,x.lng],8,{duration:.7})}};
+
+const stormAreas=[
+ [[30.25,78.9],[30.8,79.1],[30.65,79.65],[30.1,79.5]],
+ [[28.0,93.0],[27.7,93.8],[27.2,93.55],[27.45,92.8]],
+ [[27.7,87.4],[28.2,87.8],[28.0,88.4],[27.5,88.0]]
+];
+stormAreas.forEach((p,i)=>L.polygon(p,{color:"transparent",fillColor:i===0?"#f36b32":"#f4c23e",fillOpacity:.28,weight:0}).addTo(map));
+
+const labelData=[["JAMMU & KASHMIR",34.2,75.3],["LADAKH",34.3,78.1],["HIMACHAL PRADESH",31.8,77.2],["PUNJAB",31.0,75.3],["HARYANA",29.2,76.0],["DELHI",28.6,77.2],["RAJASTHAN",27.2,73.8],["UTTAR PRADESH",27.3,80.6],["UTTARAKHAND",30.2,79.3],["BIHAR",25.8,85.3],["SIKKIM",27.5,88.5],["ARUNACHAL PRADESH",28.5,94.0],["ASSAM",26.1,92.6],["NAGALAND",26.2,94.4],["MANIPUR",24.9,93.8],["MEGHALAYA",25.6,91.4]];
+labelData.forEach(x=>L.marker([x[1],x[2]],{interactive:false,icon:L.divIcon({className:"map-state-label",html:x[0],iconSize:[120,30],iconAnchor:[60,15]})}).addTo(map));
+
+function goToDashboard(key){
+  if(!locations[key])return;
+  const x=locations[key];
+  map.flyTo([x.lat,x.lng],8,{duration:.55});
+  setTimeout(()=>window.location.href="dashboard.html?location="+encodeURIComponent(key),600);
+}
+function findLocation(q){
+  q=q.trim().toLowerCase();
+  return Object.keys(locations).find(k=>q.includes(k)||locations[k].name.toLowerCase().includes(q)||locations[k].name.toLowerCase().split(",")[0]===q);
+}
+function searchLanding(){
+  const key=findLocation(document.getElementById("landingSearch").value);
+  if(key)goToDashboard(key);
+}
+document.getElementById("landingSearchBtn").onclick=searchLanding;
+document.getElementById("landingSearch").addEventListener("keydown",e=>{if(e.key==="Enter")searchLanding()});
+
+Object.entries(locations).forEach(([key,x])=>{
+  const m=L.marker([x.lat,x.lng]).addTo(map);
+  m.bindTooltip(x.name);
+  m.on("click",()=>goToDashboard(key));
+});
 </script>
-</body></html>
+</body>
+</html>

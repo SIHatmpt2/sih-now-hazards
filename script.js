@@ -45,13 +45,7 @@ stormAreas.forEach(function(points,i){
   stormOverlays[stormOverlays.length-1].addTo(map);
 });
 
-const labelData=[
-  ["JAMMU & KASHMIR",34.2,75.3],["LADAKH",34.3,78.1],["HIMACHAL\nPRADESH",31.8,77.2],
-  ["PUNJAB",31.0,75.3],["HARYANA",29.2,76.0],["DELHI",28.6,77.2],["RAJASTHAN",27.2,73.8],
-  ["UTTAR PRADESH",27.3,80.6],["UTTARAKHAND",30.2,79.3],["BIHAR",25.8,85.3],["SIKKIM",27.5,88.5],
-  ["ARUNACHAL\nPRADESH",28.5,94.0],["ASSAM",26.1,92.6],["NAGALAND",26.2,94.4],
-  ["MANIPUR",24.9,93.8],["MEGHALAYA",25.6,91.4]
-];
+const labelData=[["JAMMU & KASHMIR",34.2,75.3],["LADAKH",34.3,78.1],["HIMACHAL PRADESH",31.8,77.2],["PUNJAB",31.0,75.3],["HARYANA",29.2,76.0],["DELHI",28.6,77.2],["RAJASTHAN",27.2,73.8],["UTTAR PRADESH",27.3,80.6],["UTTARAKHAND",30.2,79.3],["BIHAR",25.8,85.3],["SIKKIM",27.5,88.5],["ARUNACHAL PRADESH",28.5,94.0],["ASSAM",26.1,92.6],["NAGALAND",26.2,94.4],["MANIPUR",24.9,93.8],["MEGHALAYA",25.6,91.4]];
 labelData.forEach(function(x){
   L.marker([x[1],x[2]],{interactive:false,icon:L.divIcon({
     className:"map-state-label",html:x[0].replace("\n","<br>"),iconSize:[100,30],iconAnchor:[50,15]

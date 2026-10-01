@@ -96,13 +96,25 @@ function setParamValue(id,value){
   const el=byId(id);
   if(!el)return;
   el.textContent=value;
-  el.classList.remove("value-low","value-moderate","value-high","value-very-high","value-active");
+  el.classList.remove(
+    "value-low","value-moderate","value-high","value-very-high",
+    "value-active","value-inactive","value-normal","value-clear",
+    "value-elevated","value-critical"
+  );
   const v=String(value||"").toLowerCase().trim().replace(/\s+/g,"-");
-  if(v==="low")el.classList.add("value-low");
-  else if(v==="moderate")el.classList.add("value-moderate");
-  else if(v==="high")el.classList.add("value-high");
-  else if(v==="very-high")el.classList.add("value-very-high");
-  else if(v==="active")el.classList.add("value-active");
+  if(v==="low"||v==="normal"||v==="clear"||v==="inactive"){
+    el.classList.add(
+      v==="low"?"value-low":
+      v==="normal"?"value-normal":
+      v==="clear"?"value-clear":"value-inactive"
+    );
+  }else if(v==="moderate"||v==="elevated"){
+    el.classList.add(v==="moderate"?"value-moderate":"value-elevated");
+  }else if(v==="high"||v==="active"){
+    el.classList.add(v==="high"?"value-high":"value-active");
+  }else if(v==="very-high"||v==="critical"){
+    el.classList.add(v==="very-high"?"value-very-high":"value-critical");
+  }
 }
 
 function formatTime(date){

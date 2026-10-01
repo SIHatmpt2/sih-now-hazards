@@ -9,7 +9,7 @@ const locations={
   shimla:{
     name:"Shimla, Himachal Pradesh",coords:"31.10° N, 77.17° E",lat:31.10,lng:77.17,
     risk:{thunderstorm:"High",hailstorm:"Moderate",cloudburst:"Moderate"},
-    params:{downburst:"54 km/h",strike:"Moderate",flash:"11 flashes/min",density:"4.9 flashes/km²",temperature:"18 °C",humidity:"72%",cloudDirection:"W",cloudDensity:"69%",cloudVelocity:"48 km/h",cloudType:"Cumulonimbus",windSpeed:"48 km/h",windDirection:"W",monsoon:"Active"},
+    params:{downburst:"86 km/h",strike:"Very High",flash:"32 flashes/min",density:"12.8 flashes/km²",temperature:"25 °C",humidity:"91%",cloudDirection:"NW",cloudDensity:"97%",cloudVelocity:"74 km/h",cloudType:"Overshooting Top",windSpeed:"81 km/h",windDirection:"NW",monsoon:"Active"},
     validity:"29 Sep 2026, 03:00 PM – 09:00 PM",
     forecast:[["03:00 – 04:00 PM","⛈️","Moderate","moderate"],["04:00 – 05:00 PM","⛈️","High","high"],["05:00 – 06:00 PM","⛈️","High","high"],["06:00 – 07:00 PM","🌧️","High","high"],["07:00 – 08:00 PM","🌧️","Moderate","moderate"],["08:00 – 09:00 PM","☁️","Low","low"]]
   },
@@ -201,6 +201,28 @@ function selectLocation(key){
   setParamValue("windSpeed",x.params.windSpeed);
   setParamValue("windDirection",x.params.windDirection);
   setParamValue("monsoonStatus",x.params.monsoon);
+
+  if(key==="shimla"){
+    const shimlaParamColors={
+      downburstVelocity:"value-high",
+      lightningStrikeIntensity:"value-very-high",
+      lightningFlashRate:"value-high",
+      lightningDensity:"value-very-high",
+      temperature:"value-moderate",
+      humidity:"value-high",
+      cloudDirection:"value-elevated",
+      cloudDensity:"value-very-high",
+      cloudVelocity:"value-high",
+      cloudType:"value-very-high",
+      windSpeed:"value-high",
+      windDirection:"value-elevated",
+      monsoonStatus:"value-active"
+    };
+    Object.keys(shimlaParamColors).forEach(function(id){
+      const el=byId(id);
+      if(el)el.classList.add(shimlaParamColors[id]);
+    });
+  }
 
   const search=byId("locationSearch");
   if(search){

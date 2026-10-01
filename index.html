@@ -31,7 +31,7 @@
   </div>
   <div class="updated">
     <span class="clock-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"></circle><path d="M12 7.5v5l3.2 2"></path></svg></span>
-    <div><small>Last Updated</small><strong>29 Sep 2026, 02:30 PM</strong></div>
+    <div><small>Last Updated</small><strong id="landingLastUpdated">—</strong></div>
     <b>● Live</b>
   </div>
 </section>
@@ -72,6 +72,16 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
+function formatLandingTime(date){
+  return date.toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"})+", "+date.toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit",hour12:true});
+}
+function updateLandingTime(){
+  const el=document.getElementById("landingLastUpdated");
+  if(el)el.textContent=formatLandingTime(new Date(Date.now()-30*60*1000));
+}
+updateLandingTime();
+setInterval(updateLandingTime,60000);
+
 const locations={
   chamoli:{name:"Chamoli, Uttarakhand",lat:30.41,lng:79.32},
   shimla:{name:"Shimla, Himachal Pradesh",lat:31.10,lng:77.17},

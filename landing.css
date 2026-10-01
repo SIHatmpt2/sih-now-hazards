@@ -23,12 +23,17 @@ body{overflow-x:hidden}
 .header-search button:hover{background:#edf4fb}.header-search button svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
 /* Typography refinement — layout unchanged */
-.hero h1{font-weight:700}
-.hero p{font-weight:500;color:#465d75}
-.updated small{font-weight:600;color:#50677f}
-.updated strong{font-weight:700}
-.about-card h2{font-weight:700}
-.about-badge{font-weight:700}
-.about-card p{font-weight:500;color:#526980}
-.sources h2{font-weight:700}
-.source-card b{font-weight:600}
+.hero h1{font-weight:800;line-height:1.12}
+.hero p{font-weight:600;color:#3f5872}
+.updated small{font-weight:700;color:#4b637c}
+.updated strong{font-weight:800}
+.updated>b{font-weight:700}
+.map-tabs .tab{font-weight:600}
+.risk-legend strong{font-weight:800}
+.legend-labels{font-weight:600}
+.about-card h2{font-weight:800}
+.about-badge{font-weight:800}
+.about-card p{font-weight:500;color:#4b637c}
+.sources h2{font-weight:800}
+.source-card b{font-weight:700}
+.source-card{color:#304b68}

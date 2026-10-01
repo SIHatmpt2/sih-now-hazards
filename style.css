@@ -9,7 +9,7 @@
 .risk-box b.very-high,.level.very-high{background:#8b0000;color:#fff}.forecast-item .level.low{background:#70c987;color:#145a2b}.forecast-item .level.moderate{background:#f39a2f;color:#5b2f00}.forecast-item .level.high{background:#e53935;color:#fff}
 
 /* Typography refinement — layout unchanged */
-.hero h2{font-weight:700}
+ .hero h2{font-weight:800}
 .hero p{font-weight:500;color:#465d75}
 .updated small{font-weight:600;color:#50677f}
 .updated strong{font-weight:700}

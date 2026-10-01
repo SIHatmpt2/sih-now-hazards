@@ -38,8 +38,8 @@
 <section class="main-grid">
   <div class="map-card">
     <div id="landingMap"></div>
-    <div class="map-tabs"><span class="active">Nowcast Map</span><span>Satellite View</span><span>Radar View</span></div>
-    <div class="risk-legend"><strong>Convective Risk (Next 6 Hours) <span>→</span></strong><div class="risk-bar"></div><div class="legend-labels"><span>Low</span><span>Moderate</span><span>High</span><span>Very High</span></div></div>
+    <div class="map-tabs"><button class="tab active" data-mode="satellite">Satellite View</button><button class="tab" data-mode="radar">Radar View</button></div>
+    <div class="risk-legend"><strong>Convective Risk <small>(Next 6 Hours)</small><span>→</span></strong><div class="risk-bar"></div><div class="legend-labels"><span>Low</span><span>Moderate</span><span>High</span><span>Very High</span></div></div>
   </div>
 
   <aside class="about-card">
@@ -69,14 +69,67 @@ const locations={
   itanagar:{name:"Itanagar, Arunachal Pradesh",lat:27.08,lng:93.62}
 };
 const map=L.map("landingMap",{zoomControl:true}).setView([29.8,82.4],5.7);
-L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{maxZoom:18,attribution:"Tiles © Esri"}).addTo(map);
+const satellite=L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{maxZoom:18,attribution:"Tiles © Esri"}).addTo(map);
+const street=L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap contributors"});
+let radarLayer=null;
 
+const stormOverlays=[];
 const stormAreas=[
  [[30.25,78.9],[30.8,79.1],[30.65,79.65],[30.1,79.5]],
  [[28.0,93.0],[27.7,93.8],[27.2,93.55],[27.45,92.8]],
  [[27.0,88.2],[27.5,88.4],[27.6,89.0],[27.1,89.1]]
 ];
-stormAreas.forEach((p,i)=>L.polygon(p,{color:"transparent",fillColor:i===0?"#f36b32":"#f4c23e",fillOpacity:.28,weight:0}).addTo(map));
+stormAreas.forEach((p,i)=>{
+  stormOverlays.push(L.polygon(p,{color:"transparent",fillColor:i===0?"#f36b32":"#f4c23e",fillOpacity:.28,weight:0}).addTo(map));
+});
+
+function hideRadar(){
+  if(radarLayer&&map.hasLayer(radarLayer))map.removeLayer(radarLayer);
+}
+
+async function showRadar(){
+  hideRadar();
+  try{
+    const response=await fetch("https://api.rainviewer.com/public/weather-maps.json",{cache:"no-store"});
+    if(!response.ok)throw new Error("Radar service unavailable");
+    const data=await response.json();
+    const frames=data.radar&&data.radar.past;
+    const frame=frames&&frames[frames.length-1];
+    if(!data.host||!frame||!frame.path)throw new Error("No radar frame available");
+    radarLayer=L.tileLayer(
+      data.host+frame.path+"/256/{z}/{x}/{y}/2/1_1.png",
+      {tileSize:256,maxNativeZoom:7,maxZoom:8,opacity:.68,attribution:"Weather data © RainViewer"}
+    ).addTo(map);
+  }catch(error){
+    console.warn("Radar View unavailable:",error);
+  }
+}
+
+document.querySelectorAll(".map-tabs .tab").forEach(function(btn){
+  btn.onclick=function(){
+    document.querySelectorAll(".map-tabs .tab").forEach(function(b){b.classList.remove("active")});
+    btn.classList.add("active");
+    const mode=btn.dataset.mode;
+
+    if(mode==="satellite"){
+      if(!map.hasLayer(satellite))map.addLayer(satellite);
+      if(map.hasLayer(street))map.removeLayer(street);
+      hideRadar();
+    }else if(mode==="radar"){
+      if(!map.hasLayer(street))map.addLayer(street);
+      if(map.hasLayer(satellite))map.removeLayer(satellite);
+      showRadar();
+    }
+
+    stormOverlays.forEach(function(layer){
+      const shouldShow=mode==="satellite";
+      const has=map.hasLayer(layer);
+      if(shouldShow&&!has)map.addLayer(layer);
+      if(!shouldShow&&has)map.removeLayer(layer);
+    });
+    setTimeout(function(){map.invalidateSize();},100);
+  };
+});
 
 const labelData=[["JAMMU & KASHMIR",34.2,75.3],["LADAKH",34.3,78.1],["HIMACHAL PRADESH",31.8,77.2],["PUNJAB",31.0,75.3],["HARYANA",29.2,76.0],["DELHI",28.6,77.2],["RAJASTHAN",27.2,73.8],["UTTAR PRADESH",27.3,80.6],["UTTARAKHAND",30.2,79.3],["BIHAR",25.8,85.3],["SIKKIM",27.5,88.5],["ARUNACHAL PRADESH",28.5,94.0],["ASSAM",26.1,92.6],["NAGALAND",26.2,94.4],["MANIPUR",24.9,93.8],["MEGHALAYA",25.6,91.4]];
 labelData.forEach(x=>L.marker([x[1],x[2]],{interactive:false,icon:L.divIcon({className:"map-state-label",html:x[0],iconSize:[120,30],iconAnchor:[60,15]})}).addTo(map));

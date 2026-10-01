@@ -139,7 +139,8 @@ function renderTimeWindow(locationData){
     forecastGrid.innerHTML=locationData.forecast.map(function(item,index){
       const start=addHours(updated,index);
       const end=addHours(updated,index+1);
-      return '<div class="forecast-item"><div class="time">'+formatTime(start)+" – "+formatTime(end)+'</div><div class="wx">'+item[1]+'</div><span class="level '+item[3]+'">'+item[2]+'</span></div>';
+      const severityIcon={low:"☁️",moderate:"🌧️",high:"⛈️","very-high":"🌩️"}[item[3]]||item[1];
+      return '<div class="forecast-item"><div class="time">'+formatTime(start)+" – "+formatTime(end)+'</div><div class="wx">'+severityIcon+'</div><span class="level '+item[3]+'">'+item[2]+'</span></div>';
     }).join("");
   }
 }

@@ -8,7 +8,7 @@ body{overflow-x:hidden}
 .hero{height:162px;padding:25px 3%;display:flex;justify-content:space-between;align-items:center;position:relative;overflow:hidden;background:linear-gradient(100deg,#f7fbff 0%,#eef6fc 55%,#dbeaf5 100%)}
 .hero:after{content:"";position:absolute;right:0;top:0;width:53%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.1)),url("https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1000&q=75") center/cover no-repeat;opacity:.45;mask-image:linear-gradient(90deg,transparent,#000 30%);-webkit-mask-image:linear-gradient(90deg,transparent,#000 30%)}
 .hero-copy,.updated{position:relative;z-index:1}.hero h1{margin:0;font-size:31px;line-height:1.14;letter-spacing:-.7px;color:#10294b}.hero h1 em{font-style:normal;color:#387fdc}.hero p{margin:7px 0 0;color:#4e647d;font-size:14px}
-.updated{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.94);padding:14px 16px;border-radius:10px;box-shadow:0 3px 14px rgba(23,55,88,.12);min-width:308px}.clock-icon{width:27px;height:27px;color:#173d67;display:grid;place-items:center}.clock-icon svg{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.updated small{display:block;color:#586d84;font-size:11px}.updated strong{display:block;font-size:13px;margin-top:3px;color:#1b3553}.updated>b{margin-left:auto;background:#dff4e5;color:#188143;padding:5px 9px;border-radius:6px;font-size:11px}
+.updated{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.94);padding:14px 16px;border-radius:10px;box-shadow:0 3px 14px rgba(23,55,88,.12);min-width:308px}.clock-icon{width:27px;height:27px;color:#173d67;display:grid;place-items:center}.clock-icon svg{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.updated small{display:block;color:#586d84;font-size:11px}.updated strong{display:block;font-size:13px;margin-top:3px;color:#1b3553}.updated>b{margin-left:auto;background:#1767b1;color:#fff;padding:5px 9px;border-radius:6px;font-size:11px;font-weight:700}.updated>b i{display:inline-block;width:7px;height:7px;border-radius:50%;background:#fff;margin-right:4px}
 .main-grid{display:grid;grid-template-columns:minmax(0,3fr) minmax(335px,1.18fr);gap:16px;padding:0 3% 16px;max-width:1600px;margin:auto}
 .map-card{height:431px;border-radius:9px;overflow:hidden;position:relative;background:#d8e0e5;border:1px solid #dfe7ee;box-shadow:0 2px 13px rgba(23,55,88,.08)}#landingMap{position:absolute;inset:0}
 .map-tabs{position:absolute;right:13px;top:13px;z-index:600;background:rgba(255,255,255,.95);border-radius:20px;padding:3px;display:flex;box-shadow:0 2px 8px rgba(0,0,0,.13)}.map-tabs .tab{border:0;background:transparent;color:#314c68;padding:8px 17px;border-radius:17px;font-size:12px;cursor:pointer}.map-tabs .tab.active{background:#153c64;color:#fff;box-shadow:0 2px 5px rgba(0,0,0,.15)}
@@ -27,7 +27,6 @@ body{overflow-x:hidden}
 .hero p{font-weight:600;color:#3f5872}
 .updated small{font-weight:700;color:#4b637c}
 .updated strong{font-weight:800}
-.updated>b{font-weight:700}
 .map-tabs .tab{font-weight:600}
 .legend-labels{font-weight:600}
 .about-card h2{font-weight:800}

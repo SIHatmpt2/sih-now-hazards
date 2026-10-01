@@ -92,6 +92,19 @@ function setText(id,value){
   if(el)el.textContent=value;
 }
 
+function setParamValue(id,value){
+  const el=byId(id);
+  if(!el)return;
+  el.textContent=value;
+  el.classList.remove("value-low","value-moderate","value-high","value-very-high","value-active");
+  const v=String(value||"").toLowerCase().trim().replace(/\s+/g,"-");
+  if(v==="low")el.classList.add("value-low");
+  else if(v==="moderate")el.classList.add("value-moderate");
+  else if(v==="high")el.classList.add("value-high");
+  else if(v==="very-high")el.classList.add("value-very-high");
+  else if(v==="active")el.classList.add("value-active");
+}
+
 function formatTime(date){
   return date.toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit",hour12:true});
 }
@@ -164,7 +177,7 @@ function selectLocation(key){
   currentLocationKey=key;
   renderTimeWindow(x);
   setText("downburstVelocity",x.params.downburst);
-  setText("lightningStrikeIntensity",x.params.strike);
+  setParamValue("lightningStrikeIntensity",x.params.strike);
   setText("lightningFlashRate",x.params.flash);
   setText("lightningDensity",x.params.density);
   setText("temperature",x.params.temperature);
@@ -175,7 +188,7 @@ function selectLocation(key){
   setText("cloudType",x.params.cloudType);
   setText("windSpeed",x.params.windSpeed);
   setText("windDirection",x.params.windDirection);
-  setText("monsoonStatus",x.params.monsoon);
+  setParamValue("monsoonStatus",x.params.monsoon);
 
   const search=byId("locationSearch");
   if(search){

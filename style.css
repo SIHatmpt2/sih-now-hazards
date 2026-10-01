@@ -2,3 +2,22 @@
 
 /* Demo analysis severity */
 .risk-box b.very-high,.level.very-high{background:#a51515;color:#fff}
+
+/* Typography refinement — layout unchanged */
+.hero h2{font-weight:700}
+.hero p{font-weight:500;color:#465d75}
+.updated small{font-weight:600;color:#50677f}
+.updated strong{font-weight:700}
+.location-panel h2{font-weight:700}
+.location-panel>p{font-weight:500;color:#536b82}
+.risk-box span{font-weight:600}
+.risk-box b{font-weight:700}
+.validity strong{font-weight:600}
+.validity span{font-weight:500;color:#566d84}
+.parameters h3{font-weight:700}
+.param span{font-weight:500;color:#4d647d}
+.param b{font-weight:700}
+.forecast h3{font-weight:700}
+.forecast p{font-weight:500}
+.forecast-item .time{font-weight:600}
+.forecast-item .level{font-weight:700}

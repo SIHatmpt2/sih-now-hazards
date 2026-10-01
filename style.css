@@ -25,8 +25,8 @@
 
 /* Parameter severity text colors */
 
-.param b.value-low{color:#23863f!important}
-.param b.value-moderate{color:#c77700!important}
-.param b.value-high{color:#c63a34!important}
-.param b.value-very-high{color:#9f1f1a!important}
-.param b.value-active{color:#23863f!important}
+.param b.value-low{color:#2e8b57!important}
+.param b.value-moderate{color:#d17a00!important}
+.param b.value-high{color:#d12f2f!important}
+.param b.value-very-high{color:#a31616!important}
+.param b.value-active{color:#d12f2f!important}

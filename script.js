@@ -203,25 +203,8 @@ function selectLocation(key){
   setParamValue("monsoonStatus",x.params.monsoon);
 
   if(key==="shimla"){
-    const shimlaParamColors={
-      downburstVelocity:"value-high",
-      lightningStrikeIntensity:"value-very-high",
-      lightningFlashRate:"value-high",
-      lightningDensity:"value-very-high",
-      temperature:"value-moderate",
-      humidity:"value-high",
-      cloudDirection:"value-elevated",
-      cloudDensity:"value-very-high",
-      cloudVelocity:"value-high",
-      cloudType:"value-very-high",
-      windSpeed:"value-high",
-      windDirection:"value-elevated",
-      monsoonStatus:"value-active"
-    };
-    Object.keys(shimlaParamColors).forEach(function(id){
-      const el=byId(id);
-      if(el)el.classList.add(shimlaParamColors[id]);
-    });
+    const cloudType=byId("cloudType");
+    if(cloudType)cloudType.classList.add("value-very-high");
   }
 
   const search=byId("locationSearch");

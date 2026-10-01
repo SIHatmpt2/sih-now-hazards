@@ -92,6 +92,39 @@ function setText(id,value){
   if(el)el.textContent=value;
 }
 
+function formatTime(date){
+  return date.toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit",hour12:true});
+}
+
+function formatDateTime(date){
+  return date.toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"})+", "+formatTime(date);
+}
+
+function getUpdatedTime(){
+  return new Date(Date.now()-30*60*1000);
+}
+
+function addHours(date,hours){
+  return new Date(date.getTime()+hours*60*60*1000);
+}
+
+let currentLocationKey="chamoli";
+
+function renderTimeWindow(locationData){
+  const updated=getUpdatedTime();
+  setText("lastUpdatedTime",formatDateTime(updated));
+  setText("validityTime","("+formatDateTime(updated)+" – "+formatDateTime(addHours(updated,6))+")");
+
+  const forecastGrid=byId("forecastGrid");
+  if(forecastGrid&&locationData&&locationData.forecast){
+    forecastGrid.innerHTML=locationData.forecast.map(function(item,index){
+      const start=addHours(updated,index);
+      const end=addHours(updated,index+1);
+      return '<div class="forecast-item"><div class="time">'+formatTime(start)+" – "+formatTime(end)+'</div><div class="wx">'+item[1]+'</div><span class="level '+item[3]+'">'+item[2]+'</span></div>';
+    }).join("");
+  }
+}
+
 function riskClass(value){
   const v=String(value||"").toLowerCase().replace(/\s+/g,"-");
   if(v==="low")return "low";
@@ -128,7 +161,8 @@ function selectLocation(key){
   if(hailstorm)hailstorm.className=riskClass(x.risk.hailstorm);
   if(cloudburst)cloudburst.className=riskClass(x.risk.cloudburst);
 
-  setText("validityTime","("+x.validity+")");
+  currentLocationKey=key;
+  renderTimeWindow(x);
   setText("downburstVelocity",x.params.downburst);
   setText("lightningStrikeIntensity",x.params.strike);
   setText("lightningFlashRate",x.params.flash);
@@ -142,13 +176,6 @@ function selectLocation(key){
   setText("windSpeed",x.params.windSpeed);
   setText("windDirection",x.params.windDirection);
   setText("monsoonStatus",x.params.monsoon);
-
-  const forecastGrid=byId("forecastGrid");
-  if(forecastGrid){
-    forecastGrid.innerHTML=x.forecast.map(function(item){
-      return '<div class="forecast-item"><div class="time">'+item[0]+'</div><div class="wx">'+item[1]+'</div><span class="level '+item[3]+'">'+item[2]+'</span></div>';
-    }).join("");
-  }
 
   const search=byId("locationSearch");
   if(search){
@@ -187,22 +214,18 @@ document.querySelectorAll(".tab").forEach(function(btn){
     btn.classList.add("active");
     const mode=btn.dataset.mode;
 
-    if(mode==="nowcast"){
+    if(mode==="satellite"){
       if(!map.hasLayer(satellite))map.addLayer(satellite);
       if(map.hasLayer(street))map.removeLayer(street);
       hideRadar();
-    }else if(mode==="satellite"){
-      if(!map.hasLayer(satellite))map.addLayer(satellite);
-      if(map.hasLayer(street))map.removeLayer(street);
-      hideRadar();
-    }else{
+    }else if(mode==="radar"){
       if(!map.hasLayer(street))map.addLayer(street);
       if(map.hasLayer(satellite))map.removeLayer(satellite);
       showRadar();
     }
 
     stormOverlays.forEach(function(layer){
-      const shouldShow=mode==="nowcast";
+      const shouldShow=mode==="satellite";
       const has=map.hasLayer(layer);
       if(shouldShow&&!has)map.addLayer(layer);
       if(!shouldShow&&has)map.removeLayer(layer);
@@ -213,3 +236,6 @@ document.querySelectorAll(".tab").forEach(function(btn){
 
 const initialLocation=findLocation(new URLSearchParams(window.location.search).get("location"))||"chamoli";
 selectLocation(initialLocation);
+setInterval(function(){
+  renderTimeWindow(locations[currentLocationKey]);
+},60000);

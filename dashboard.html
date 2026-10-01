@@ -9,12 +9,15 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 </head>
 <body>
-<header class="topbar">
+<header class="nav">
   <div class="brand">
-    <div class="brand-mark" aria-hidden="true"><img src="logo.png" alt="SkyIntel"></div>
+    <div class="brand-icon" aria-hidden="true"><img src="favicon.png" alt=""></div>
+    <div class="brand-copy">
+      <div class="brand-name"><span class="brand-sky">Sky</span><span class="brand-intel">Intel</span></div>
+      <div class="brand-tagline">Convective Nowcasting for<br>Thunderstorms, Hail &amp; Cloudbursts</div>
+    </div>
   </div>
-  <div class="header-actions">
-    <div class="search">
+  <div class="header-search">
       <svg viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.5"/><path d="m16 16 5 5"/></svg>
       <input id="locationSearch" list="dashboardLocationOptions" placeholder="Search location (e.g. Shimla, Chamoli, Gangtok, Itanagar)" autocomplete="off">
       <datalist id="dashboardLocationOptions">
@@ -32,12 +35,12 @@
 <section class="hero">
   <div class="hero-copy">
     <h2>Convective Scale Nowcasting<br>for Thunderstorms, Hail &amp; Cloudbursts <em>(06 hr)</em></h2>
-    <p>Real-time predictions and early warnings for convective weather events in India's hilly regions.</p>
+    <p>Real-time predictions and early warnings for convective weather events across India.</p>
   </div>
   <div class="updated">
     <svg class="update-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3 2"/></svg>
     <div><small>Last Updated</small><strong id="lastUpdatedTime">—</strong></div>
-    <b><i></i> Live</b>
+    <b>● Live</b>
   </div>
 </section>
 

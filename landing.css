@@ -26,7 +26,7 @@ body{overflow-x:hidden}
 .hero h1{font-weight:800;line-height:1.12}
 .hero p{font-weight:600;color:#3f5872}
 .updated small{font-weight:700;color:#4b637c}
-.updated strong{font-weight:800}
+.updated strong{font-weight:800!important}
 .map-tabs .tab{font-weight:600}
 .legend-labels{font-weight:600}
 .about-card h2{font-weight:800}

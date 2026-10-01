@@ -31,8 +31,8 @@ const locations={
 
 const map=L.map("map",{zoomControl:true}).setView([29.8,82.4],5.7);
 const satellite=L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{maxZoom:18,attribution:"Tiles © Esri"}).addTo(map);
-const terrain=L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",{maxZoom:17,attribution:"© OpenTopoMap contributors"});
 const street=L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap contributors"});
+let radarLayer=null;
 
 const stormOverlays=[];
 const stormAreas=[
@@ -63,6 +63,28 @@ marker.bindTooltip(locations.chamoli.name,{direction:"top",offset:[0,-8]});
 
 function byId(id){
   return document.getElementById(id);
+}
+
+function hideRadar(){
+  if(radarLayer&&map.hasLayer(radarLayer))map.removeLayer(radarLayer);
+}
+
+async function showRadar(){
+  hideRadar();
+  try{
+    const response=await fetch("https://api.rainviewer.com/public/weather-maps.json",{cache:"no-store"});
+    if(!response.ok)throw new Error("Radar service unavailable");
+    const data=await response.json();
+    const frames=data.radar&&data.radar.past;
+    const frame=frames&&frames[frames.length-1];
+    if(!data.host||!frame||!frame.path)throw new Error("No radar frame available");
+    radarLayer=L.tileLayer(
+      data.host+frame.path+"/256/{z}/{x}/{y}/2/1_1.png",
+      {tileSize:256,maxNativeZoom:7,maxZoom:8,opacity:.68,attribution:"Weather data © RainViewer"}
+    ).addTo(map);
+  }catch(error){
+    console.warn("Radar View unavailable:",error);
+  }
 }
 
 function setText(id,value){
@@ -165,14 +187,18 @@ document.querySelectorAll(".tab").forEach(function(btn){
     btn.classList.add("active");
     const mode=btn.dataset.mode;
 
-    if(mode==="nowcast"||mode==="satellite"){
+    if(mode==="nowcast"){
       if(!map.hasLayer(satellite))map.addLayer(satellite);
-      if(map.hasLayer(terrain))map.removeLayer(terrain);
       if(map.hasLayer(street))map.removeLayer(street);
+      hideRadar();
+    }else if(mode==="satellite"){
+      if(!map.hasLayer(satellite))map.addLayer(satellite);
+      if(map.hasLayer(street))map.removeLayer(street);
+      hideRadar();
     }else{
       if(!map.hasLayer(street))map.addLayer(street);
       if(map.hasLayer(satellite))map.removeLayer(satellite);
-      if(map.hasLayer(terrain))map.removeLayer(terrain);
+      showRadar();
     }
 
     stormOverlays.forEach(function(layer){

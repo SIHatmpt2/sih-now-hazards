@@ -176,18 +176,18 @@ function selectLocation(key){
 
   currentLocationKey=key;
   renderTimeWindow(x);
-  setText("downburstVelocity",x.params.downburst);
+  setParamValue("downburstVelocity",x.params.downburst);
   setParamValue("lightningStrikeIntensity",x.params.strike);
-  setText("lightningFlashRate",x.params.flash);
-  setText("lightningDensity",x.params.density);
-  setText("temperature",x.params.temperature);
-  setText("humidity",x.params.humidity);
-  setText("cloudDirection",x.params.cloudDirection);
-  setText("cloudDensity",x.params.cloudDensity);
-  setText("cloudVelocity",x.params.cloudVelocity);
-  setText("cloudType",x.params.cloudType);
-  setText("windSpeed",x.params.windSpeed);
-  setText("windDirection",x.params.windDirection);
+  setParamValue("lightningFlashRate",x.params.flash);
+  setParamValue("lightningDensity",x.params.density);
+  setParamValue("temperature",x.params.temperature);
+  setParamValue("humidity",x.params.humidity);
+  setParamValue("cloudDirection",x.params.cloudDirection);
+  setParamValue("cloudDensity",x.params.cloudDensity);
+  setParamValue("cloudVelocity",x.params.cloudVelocity);
+  setParamValue("cloudType",x.params.cloudType);
+  setParamValue("windSpeed",x.params.windSpeed);
+  setParamValue("windDirection",x.params.windDirection);
   setParamValue("monsoonStatus",x.params.monsoon);
 
   const search=byId("locationSearch");

@@ -21,3 +21,12 @@
 .forecast p{font-weight:500}
 .forecast-item .time{font-weight:600}
 .forecast-item .level{font-weight:700}
+
+
+/* Parameter severity text colors */
+
+.param b.value-low{color:#23863f!important}
+.param b.value-moderate{color:#c77700!important}
+.param b.value-high{color:#c63a34!important}
+.param b.value-very-high{color:#9f1f1a!important}
+.param b.value-active{color:#23863f!important}

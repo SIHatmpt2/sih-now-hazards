@@ -41,7 +41,12 @@ class AccuWeatherProvider:
         if not isinstance(obj, dict):
             return None
         value = obj.get("Metric")
-        return AccuWeatherProvider._float(value.get("Value")) if isinstance(value, dict) else None
+        if isinstance(value, dict):
+            parsed = AccuWeatherProvider._float(value.get("Value"))
+            if parsed is not None:
+                return parsed
+        # Accept a direct Value shape as a defensive fallback.
+        return AccuWeatherProvider._float(obj.get("Value"))
 
     @staticmethod
     def _timestamp(value: str | None) -> datetime:
@@ -103,6 +108,17 @@ class AccuWeatherProvider:
         degrees = AccuWeatherProvider._float(direction.get("Degrees"))
         return speed, degrees
 
+    @staticmethod
+    def _quantity(obj, field: str):
+        if not isinstance(obj, dict):
+            return None
+        nested = obj.get(field)
+        if isinstance(nested, dict):
+            parsed = AccuWeatherProvider._metric(nested)
+            if parsed is not None:
+                return parsed
+        return AccuWeatherProvider._metric(obj)
+
     def _point_from_current(self, row: dict) -> WeatherPoint:
         wind_speed, wind_direction = self._wind_values(row.get("Wind"))
         gust_speed, _ = self._wind_values(row.get("WindGust"))
@@ -117,6 +133,17 @@ class AccuWeatherProvider:
             wind_speed_kmh=wind_speed,
             wind_direction_deg=wind_direction,
             wind_gust_kmh=gust_speed,
+            weather_code=self._float(row.get("WeatherIcon")),
+            weather_icon=int(row["WeatherIcon"]) if self._float(row.get("WeatherIcon")) is not None else None,
+            weather_text=row.get("WeatherText"),
+            real_feel_temperature_c=self._metric(row.get("RealFeelTemperature")),
+            dew_point_c=self._metric(row.get("DewPoint")),
+            visibility_km=self._metric(row.get("Visibility")),
+            ceiling_m=self._metric(row.get("Ceiling")),
+            uv_index=self._float(row.get("UVIndexFloat", row.get("UVIndex"))),
+            pressure_hpa=self._metric(row.get("Pressure")),
+            precipitation_type=row.get("PrecipitationType"),
+            precipitation_intensity=row.get("PrecipitationIntensity"),
         )
 
     def _point_from_hourly(self, row: dict) -> WeatherPoint:
@@ -124,9 +151,10 @@ class AccuWeatherProvider:
         gust_speed, _ = self._wind_values(row.get("WindGust"))
         rain = self._metric(row.get("Rain"))
         total_liquid = self._metric(row.get("TotalLiquid"))
+        temp = self._metric(row.get("Temperature"))
         return WeatherPoint(
             timestamp=self._timestamp(row.get("DateTime")),
-            temperature_c=self._metric(row.get("Temperature")),
+            temperature_c=temp,
             humidity_pct=self._float(row.get("RelativeHumidity")),
             precipitation_probability_pct=self._float(row.get("PrecipitationProbability")),
             precipitation_mm=total_liquid,
@@ -135,6 +163,19 @@ class AccuWeatherProvider:
             wind_speed_kmh=wind_speed,
             wind_direction_deg=wind_direction,
             wind_gust_kmh=gust_speed,
+            weather_code=self._float(row.get("WeatherIcon")),
+            weather_icon=int(row["WeatherIcon"]) if self._float(row.get("WeatherIcon")) is not None else None,
+            weather_text=row.get("IconPhrase"),
+            real_feel_temperature_c=self._metric(row.get("RealFeelTemperature")),
+            dew_point_c=self._metric(row.get("DewPoint")),
+            visibility_km=self._metric(row.get("Visibility")),
+            ceiling_m=self._metric(row.get("Ceiling")),
+            uv_index=self._float(row.get("UVIndexFloat", row.get("UVIndex"))),
+            precipitation_type=row.get("PrecipitationType"),
+            precipitation_intensity=row.get("PrecipitationIntensity"),
+            thunderstorm_probability_pct=self._float(row.get("ThunderstormProbability")),
+            rain_probability_pct=self._float(row.get("RainProbability")),
+            solar_irradiance_wm2=self._metric(row.get("SolarIrradiance")),
         )
 
     async def fetch(self, latitude: float, longitude: float, hours: int = 6) -> WeatherResponse:

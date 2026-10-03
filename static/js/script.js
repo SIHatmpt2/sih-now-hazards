@@ -120,7 +120,7 @@ function formatDateTime(date){
 }
 
 function getUpdatedTime(){
-  return new Date(Date.now()-30*60*1000);
+  return new Date();
 }
 
 function addHours(date,hours){
@@ -169,16 +169,39 @@ async function loadLiveWeather(locationData){
     if(cloudCover!==null&&cloudCover!==undefined)setParamValue("cloudDensity",Number(cloudCover).toFixed(0)+"%");
     if(windSpeed!==null&&windSpeed!==undefined)setParamValue("windSpeed",Number(windSpeed).toFixed(0)+" km/h");
     if(windDirection)setParamValue("windDirection",windDirection);
-
-    if(weather.fetched_at)setText("lastUpdatedTime",formatBackendDateTime(weather.fetched_at));
-
-    const validityStart=weather.fetched_at?new Date(weather.fetched_at):null;
-    if(validityStart&&!Number.isNaN(validityStart.getTime())){
-      setText(
-        "validityTime",
-        "("+formatBackendDateTime(validityStart)+" – "+formatBackendDateTime(addHours(validityStart,6))+")"
-      );
+    if(current.weather_text)setParamValue("cloudType",current.weather_text);
+    if(current.timestamp){
+      const observed=new Date(current.timestamp);
+      if(!Number.isNaN(observed.getTime())){
+        setParamValue("monsoonStatus",observed.getMonth()>=5&&observed.getMonth()<=8?"Active":"Off-season");
+      }
     }
+
+    const lightning=weather.lightning;
+    if(lightning){
+      if(lightning.peak_current_a!==null&&lightning.peak_current_a!==undefined){
+        setParamValue("lightningStrikeIntensity",(Number(lightning.peak_current_a)/1000).toFixed(1)+" kA");
+      }else if(lightning.strike_count>0){
+        setParamValue("lightningStrikeIntensity","Observed");
+      }else{
+        setParamValue("lightningStrikeIntensity","None");
+      }
+      if(lightning.flash_rate_per_min!==null&&lightning.flash_rate_per_min!==undefined){
+        setParamValue("lightningFlashRate",Number(lightning.flash_rate_per_min).toFixed(1)+" flashes/min");
+      }
+      if(lightning.density_per_km2!==null&&lightning.density_per_km2!==undefined){
+        setParamValue("lightningDensity",Number(lightning.density_per_km2).toFixed(2)+" flashes/km²");
+      }
+    }
+
+    if(weather.fetched_at){
+      const fetched=new Date(weather.fetched_at);
+      if(!Number.isNaN(fetched.getTime())){
+        setText("lastUpdatedTime",formatBackendDateTime(weather.fetched_at));
+        setText("validityTime","("+formatBackendDateTime(weather.fetched_at)+" – "+formatBackendDateTime(addHours(fetched,6))+")");
+      }
+    }
+    renderTimeWindow(locationData,weather);
 
     console.info("SkyIntel live weather",{
       provider:weather.provider,
@@ -323,5 +346,6 @@ document.querySelectorAll(".tab").forEach(function(btn){
 const initialLocation=findLocation(new URLSearchParams(window.location.search).get("location"))||"chamoli";
 selectLocation(initialLocation);
 setInterval(function(){
-  renderTimeWindow(locations[currentLocationKey]);
-},60000);
+  const liveLocation=locations[currentLocationKey];
+  if(liveLocation)loadLiveWeather(liveLocation);
+},300000);

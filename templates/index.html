@@ -158,7 +158,7 @@ function goToDashboard(key){
   if(!locations[key])return;
   const x=locations[key];
   map.flyTo([x.lat,x.lng],8,{duration:.55});
-  setTimeout(()=>window.location.href="dashboard.html?location="+encodeURIComponent(key),600);
+  setTimeout(()=>window.location.href="/dashboard?location="+encodeURIComponent(key),600);
 }
 function findLocation(q){
   q=q.trim().toLowerCase();

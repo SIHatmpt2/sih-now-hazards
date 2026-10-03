@@ -4,14 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>SkyIntel — Convective Scale Nowcasting</title>
-<link rel="icon" type="image/png" href="favicon.png">
-<link rel="stylesheet" href="style.css?v=20261001-updated1">
+<link rel="icon" type="image/png" href="static/images/favicon.png">
+<link rel="stylesheet" href="static/css/style.css?v=20261001-updated1">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 </head>
 <body>
 <header class="nav">
   <div class="brand">
-    <div class="brand-icon" aria-hidden="true"><img src="favicon.png" alt=""></div>
+    <div class="brand-icon" aria-hidden="true"><img src="static/images/favicon.png" alt=""></div>
     <div class="brand-copy">
       <div class="brand-name"><span class="brand-sky">Sky</span><span class="brand-intel">Intel</span></div>
       <div class="brand-tagline">Convective Nowcasting for<br>Thunderstorms, Hail &amp; Cloudbursts</div>
@@ -69,10 +69,10 @@
 </aside>
 
 <section class="forecast panel">
-  <div class="forecast-title"><div class="forecast-heading"><svg class="clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><div><h3>6-Hour Nowcast</h3><p>Convective weather risk for the next 6 hours</p></div></div><div class="mini-legend"><span>● Low</span><span>● Moderate</span><span>● High</span><span>● Very High</span></div></div>
+  <div class="forecast-title"><div class="forecast-heading"><svg class="nowcast-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2.5"/><path d="M12 4v3M12 17v3M4 12h3M17 12h3"/></svg><div><h3>6-Hour Nowcast</h3><p>Convective weather risk for the next 6 hours</p></div></div><div class="mini-legend"><span>● Low</span><span>● Moderate</span><span>● High</span><span>● Very High</span></div></div>
   <div class="forecast-grid" id="forecastGrid"></div>
 </section>
 </div>
 </main>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="script.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="static/js/script.js"></script>
 </body></html>

@@ -39,6 +39,9 @@ class Settings(BaseSettings):
     # AccuWeather Core Weather API.
     accuweather_api_base_url: str = "https://dataservice.accuweather.com"
     accuweather_api_key: str | None = None
+    # Optional separate key; falls back to ACCUWEATHER_API_KEY because the
+    # Lightning REST endpoints use the same Bearer authentication format.
+    accuweather_lightning_api_key: str | None = None
     accuweather_location_key_cache_ttl_seconds: int = Field(86400, ge=300, le=604800)
 
     # Existing generic weather settings retained for provider adapters.

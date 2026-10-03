@@ -2,9 +2,9 @@
 
 Backend implementation follows the supplied SkyIntel architecture and leaves the existing frontend files untouched.
 
-Implemented: FastAPI and API versioning; PostgreSQL/PostGIS schema and Alembic migration; Open-Meteo provider adapter; RainViewer radar metadata; Redis cache; MinIO raw payload storage; QA/freshness checks; feature contract; XGBoost artifact loading; transparent baseline scoring; six-hour risk nowcast; Celery worker and Beat; training/evaluation utilities; tests.
+Implemented: FastAPI and API versioning; PostgreSQL/PostGIS schema and Alembic migration; IMD and AccuWeather weather adapters; Open-Meteo development fallback; RainViewer radar metadata; Redis cache; MinIO raw payload storage; QA/freshness checks; feature contract; XGBoost artifact loading; transparent baseline scoring; six-hour risk nowcast; Celery worker and Beat; training/evaluation utilities; tests.
 
-The default weather adapter uses Open-Meteo as a working no-key baseline. Provider adapters remain replaceable for institutional sources such as IMD. Trained/scientifically validated models and complete satellite/3D rendering are not supplied by the architecture, so unvalidated outputs are explicitly reported as model_score.
+The weather service uses IMD as the primary configured source and AccuWeather as the secondary configured source. It falls back to Open-Meteo only when neither keyed source is configured. Trained/scientifically validated models and complete satellite/3D rendering are not supplied by the architecture, so unvalidated outputs are explicitly reported as model_score.
 
 ## Docker
 

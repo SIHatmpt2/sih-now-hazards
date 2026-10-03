@@ -128,6 +128,66 @@ function addHours(date,hours){
 }
 
 let currentLocationKey="chamoli";
+let liveWeatherRequestId=0;
+
+function formatBackendDateTime(value){
+  const date=new Date(value);
+  if(Number.isNaN(date.getTime()))return "—";
+  return formatDateTime(date);
+}
+
+function degreesToCompass(degrees){
+  if(degrees===null||degrees===undefined||Number.isNaN(Number(degrees)))return null;
+  const directions=["N","NNE","NE","ENE","E","ESE","SE","SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"];
+  return directions[Math.round(Number(degrees)/22.5)%16];
+}
+
+async function loadLiveWeather(locationData){
+  const requestId=++liveWeatherRequestId;
+  if(!locationData)return;
+
+  try{
+    const response=await fetch(
+      "/api/v1/weather/current?latitude="+encodeURIComponent(locationData.lat)+
+      "&longitude="+encodeURIComponent(locationData.lng),
+      {cache:"no-store"}
+    );
+    if(!response.ok)throw new Error("Weather API returned HTTP "+response.status);
+
+    const weather=await response.json();
+    if(requestId!==liveWeatherRequestId||currentLocationKey!==findLocation(locationData.name))return;
+
+    const current=weather.current||{};
+    const temperature=current.temperature_c;
+    const humidity=current.humidity_pct;
+    const cloudCover=current.cloud_cover_pct;
+    const windSpeed=current.wind_speed_kmh;
+    const windDirection=degreesToCompass(current.wind_direction_deg);
+
+    if(temperature!==null&&temperature!==undefined)setParamValue("temperature",Number(temperature).toFixed(0)+" °C");
+    if(humidity!==null&&humidity!==undefined)setParamValue("humidity",Number(humidity).toFixed(0)+"%");
+    if(cloudCover!==null&&cloudCover!==undefined)setParamValue("cloudDensity",Number(cloudCover).toFixed(0)+"%");
+    if(windSpeed!==null&&windSpeed!==undefined)setParamValue("windSpeed",Number(windSpeed).toFixed(0)+" km/h");
+    if(windDirection)setParamValue("windDirection",windDirection);
+
+    if(weather.fetched_at)setText("lastUpdatedTime",formatBackendDateTime(weather.fetched_at));
+
+    const validityStart=weather.fetched_at?new Date(weather.fetched_at):null;
+    if(validityStart&&!Number.isNaN(validityStart.getTime())){
+      setText(
+        "validityTime",
+        "("+formatBackendDateTime(validityStart)+" – "+formatBackendDateTime(addHours(validityStart,6))+")"
+      );
+    }
+
+    console.info("SkyIntel live weather",{
+      provider:weather.provider,
+      warnings:weather.warnings||[]
+    });
+  }catch(error){
+    console.warn("Live backend weather unavailable; keeping dashboard fallback values.",error);
+  }
+}
 
 function renderTimeWindow(locationData){
   const updated=getUpdatedTime();
@@ -212,6 +272,7 @@ function selectLocation(key){
   marker.setTooltipContent(x.name);
   map.flyTo([x.lat,x.lng],8,{duration:1});
   setTimeout(function(){map.invalidateSize();},250);
+  loadLiveWeather(x);
 }
 
 function searchDashboard(){

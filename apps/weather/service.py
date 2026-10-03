@@ -148,7 +148,9 @@ def point_to_features(p: WeatherPoint, latitude, longitude):
         weather_code=p.weather_code,
         cloud_direction_deg=p.wind_direction_deg,
         cloud_velocity_kmh=p.wind_speed_kmh,
-        cloud_type=cloud_type_from_weather(p),
+        # Cloud type requires satellite/cloud-classification data; do not
+        # infer it from a weather description or cloud-cover percentage.
+        cloud_type=None,
         downburst_velocity_kmh=p.wind_gust_kmh,
-        monsoon_status="Active" if ts.month in (6, 7, 8, 9) else "Off-season",
+        monsoon_status="Yes" if ts.month in (6, 7, 8, 9) else "No",
     )

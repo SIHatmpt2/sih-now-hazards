@@ -81,6 +81,12 @@ class AccuWeatherProvider:
             "/locations/v1/geoposition/search",
             {"q": f"{latitude:.3f},{longitude:.3f}", "language": "en-us", "topLevel": "true"},
         )
+        # AccuWeather's geoposition endpoint returns a JSON array of location
+        # objects. Accept the documented list response and retain support for
+        # a single object in case the provider returns one.
+        if isinstance(payload, list):
+            payload = payload[0] if payload and isinstance(payload[0], dict) else None
+
         if not isinstance(payload, dict) or not payload.get("Key"):
             raise RuntimeError("AccuWeather geoposition lookup returned no location key")
 

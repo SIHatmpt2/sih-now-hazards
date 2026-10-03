@@ -169,11 +169,10 @@ async function loadLiveWeather(locationData){
     if(cloudCover!==null&&cloudCover!==undefined)setParamValue("cloudDensity",Number(cloudCover).toFixed(0)+"%");
     if(windSpeed!==null&&windSpeed!==undefined)setParamValue("windSpeed",Number(windSpeed).toFixed(0)+" km/h");
     if(windDirection)setParamValue("windDirection",windDirection);
-    if(current.weather_text)setParamValue("cloudType",current.weather_text);
     if(current.timestamp){
       const observed=new Date(current.timestamp);
       if(!Number.isNaN(observed.getTime())){
-        setParamValue("monsoonStatus",observed.getMonth()>=5&&observed.getMonth()<=8?"Active":"Off-season");
+        setParamValue("monsoonStatus",observed.getMonth()>=5&&observed.getMonth()<=8?"Yes":"No");
       }
     }
 

@@ -212,22 +212,54 @@ async function loadLiveWeather(locationData){
   }
 }
 
-function renderTimeWindow(locationData){
-  const updated=getUpdatedTime();
-  setText("lastUpdatedTime",formatDateTime(updated));
-  setText("validityTime","("+formatDateTime(updated)+" – "+formatDateTime(addHours(updated,6))+")");
+function renderTimeWindow(locationData,liveWeather){
+  const updated=liveWeather&&liveWeather.fetched_at?new Date(liveWeather.fetched_at):null;
+  const effectiveUpdated=updated&&!Number.isNaN(updated.getTime())?updated:getUpdatedTime();
+
+  if(!liveWeather){
+    setText("lastUpdatedTime",formatDateTime(effectiveUpdated));
+    setText("validityTime","("+formatDateTime(effectiveUpdated)+" – "+formatDateTime(addHours(effectiveUpdated,6))+")");
+  }
 
   const forecastGrid=byId("forecastGrid");
+  const hourly=liveWeather&&Array.isArray(liveWeather.hourly)?liveWeather.hourly.slice(0,6):[];
+
+  if(forecastGrid&&hourly.length){
+    forecastGrid.innerHTML=hourly.map(function(item){
+      const start=new Date(item.timestamp);
+      const end=addHours(start,1);
+      const thunder=item.thunderstorm_probability_pct;
+      const rain=item.rain_probability_pct!==null&&item.rain_probability_pct!==undefined
+        ?item.rain_probability_pct
+        :item.precipitation_probability_pct;
+      const probability=thunder!==null&&thunder!==undefined?Number(thunder):Number(rain);
+
+      let severity="Low";
+      let severityKey="low";
+      if(!Number.isNaN(probability)){
+        if(probability>=75){severity="Very High";severityKey="very-high";}
+        else if(probability>=50){severity="High";severityKey="high";}
+        else if(probability>=25){severity="Moderate";severityKey="moderate";}
+      }
+
+      const icon=thunder!==null&&thunder!==undefined
+        ?(Number(thunder)>=50?"⛈️":Number(thunder)>=25?"🌩️":"☁️")
+        :(item.precipitation_type?"🌧️":"☁️");
+
+      return '<div class="forecast-item"><div class="time">'+formatTime(start)+" – "+formatTime(end)+'</div><div class="wx">'+icon+'</div><span class="level '+severityKey+'">'+severity+'</span></div>';
+    }).join("");
+    return;
+  }
+
   if(forecastGrid&&locationData&&locationData.forecast){
     forecastGrid.innerHTML=locationData.forecast.map(function(item,index){
-      const start=addHours(updated,index);
-      const end=addHours(updated,index+1);
+      const start=addHours(effectiveUpdated,index);
+      const end=addHours(effectiveUpdated,index+1);
       const severityIcon={low:"☁️",moderate:"🌧️",high:"🌩️","very-high":"⛈️"}[item[3]]||item[1];
       return '<div class="forecast-item"><div class="time">'+formatTime(start)+" – "+formatTime(end)+'</div><div class="wx">'+severityIcon+'</div><span class="level '+item[3]+'">'+item[2]+'</span></div>';
     }).join("");
   }
 }
-
 function riskClass(value){
   const v=String(value||"").toLowerCase().replace(/\s+/g,"-");
   if(v==="low")return "low";

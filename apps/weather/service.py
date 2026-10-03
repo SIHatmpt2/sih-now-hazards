@@ -10,6 +10,7 @@ from apps.core.schemas import FeatureBundle
 from apps.weather.accuweather import AccuWeatherProvider
 from apps.weather.imd import IMDProvider
 from apps.weather.open_meteo import OpenMeteoProvider
+from apps.weather.lightning import AccuWeatherLightningProvider
 from apps.weather.schemas import WeatherPoint, WeatherResponse
 
 
@@ -19,10 +20,11 @@ class WeatherService:
         self.imd = IMDProvider()
         self.accuweather = AccuWeatherProvider()
         self.open_meteo = OpenMeteoProvider()
+        self.lightning = AccuWeatherLightningProvider()
         self.cache = RedisCache()
 
     async def get(self, latitude: float, longitude: float, hours: int = 6):
-        key = f"weather:v2:{latitude:.4f}:{longitude:.4f}:{hours}"
+        key = f"weather:v3:{latitude:.4f}:{longitude:.4f}:{hours}"
         cached = await self.cache.get_json(key)
         if cached:
             return WeatherResponse.model_validate(cached)
@@ -51,6 +53,7 @@ class WeatherService:
             current = None
             hourly = []
             providers = []
+            lightning_result = None
 
             if isinstance(imd_result, WeatherResponse):
                 current = imd_result.current
@@ -64,6 +67,12 @@ class WeatherService:
                 hourly = accuweather_result.hourly
                 if current is None:
                     current = accuweather_result.current
+
+            if self.lightning.configured:
+                try:
+                    lightning_result = await self.lightning.fetch(latitude, longitude)
+                except Exception as exc:
+                    warnings.append(f"AccuWeather Lightning unavailable: {exc}")
 
             if current is None:
                 raise RuntimeError(
@@ -82,6 +91,7 @@ class WeatherService:
                 ),
                 current=current,
                 hourly=hourly,
+                lightning=lightning_result,
                 warnings=list(dict.fromkeys(warnings)),
             )
             await self.cache.set_json(

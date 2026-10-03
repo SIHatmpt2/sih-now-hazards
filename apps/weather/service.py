@@ -22,7 +22,7 @@ class WeatherService:
         self.cache = RedisCache()
 
     async def get(self, latitude: float, longitude: float, hours: int = 6):
-        key = f"weather:{latitude:.4f}:{longitude:.4f}:{hours}"
+        key = f"weather:v2:{latitude:.4f}:{longitude:.4f}:{hours}"
         cached = await self.cache.get_json(key)
         if cached:
             return WeatherResponse.model_validate(cached)

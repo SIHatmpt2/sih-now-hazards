@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>SkyIntel — Convective Scale Nowcasting</title>
-<link rel="icon" type="image/png" href="static/images/favicon.png">
-<link rel="stylesheet" href="static/css/style.css?v=20261001-updated1">
+<link rel="icon" type="image/png" href="/static/images/favicon.png">
+<link rel="stylesheet" href="/static/css/style.css?v=20261003-dashboardfix1">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 </head>
 <body>
@@ -74,5 +74,37 @@
 </section>
 </div>
 </main>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="static/js/script.js"></script>
+<script>
+(function(){
+  function loadScript(src,onload,onerror){
+    var s=document.createElement("script");
+    s.src=src;
+    s.onload=onload||function(){};
+    s.onerror=onerror||function(){};
+    document.body.appendChild(s);
+  }
+
+  function loadDashboard(){
+    loadScript("/static/js/script.js?v=20261003-dashboardfix1");
+  }
+
+  function loadLeafletFallback(){
+    loadScript(
+      "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js",
+      function(){ if(window.L) loadDashboard(); },
+      function(){ console.error("Leaflet failed to load from both configured CDNs."); }
+    );
+  }
+
+  if(window.L){
+    loadDashboard();
+  }else{
+    loadScript(
+      "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js",
+      function(){ if(window.L) loadDashboard(); else loadLeafletFallback(); },
+      loadLeafletFallback
+    );
+  }
+})();
+</script>
 </body></html>

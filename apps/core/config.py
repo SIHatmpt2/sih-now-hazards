@@ -29,7 +29,7 @@ class Settings(BaseSettings):
 
     # Weather provider selection.
     # Keep "open-meteo" until the IMD adapter is enabled in the runtime.
-    weather_provider: str = "open-meteo"
+    weather_provider: str = "imd"
     secondary_weather_provider: str = "accuweather"
 
     # IMD official data access.

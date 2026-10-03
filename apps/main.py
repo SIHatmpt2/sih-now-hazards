@@ -15,5 +15,8 @@ app=FastAPI(title=settings.app_name,version="1.0.0",docs_url="/docs",redoc_url="
 def landing_page():return FileResponse(TEMPLATES_DIR/"index.html")
 @app.get("/dashboard",include_in_schema=False)
 def dashboard_page():return FileResponse(TEMPLATES_DIR/"dashboard.html")
+
+@app.get("/dashboard.html",include_in_schema=False)
+def legacy_dashboard_page():return dashboard_page()
 @app.get("/health",include_in_schema=False)
 def health():return {"status":"ok","service":settings.app_name,"version":app.version}

@@ -290,11 +290,11 @@ class BhuvanLightningProvider:
             return [], False
 
         if info_format == "text/plain":
-            features = cls._text_features(response.text)
+            features = self._text_features(response.text)
             return features, bool(features)
 
         if info_format == "text/html":
-            features = cls._html_features(response.text)
+            features = self._html_features(response.text)
             return features, bool(features)
 
         if "json" in response.headers.get("content-type", "").lower() or info_format == "application/json":

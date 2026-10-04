@@ -39,3 +39,45 @@ def test_bhuvan_lightning_result_keeps_real_fields_without_synthetic_values():
     assert result.latest_observation_time is not None
     assert result.latest_latitude == 31.10
     assert result.latest_longitude == 77.17
+
+
+def test_bhuvan_lightning_text_key_value_parser():
+    features = BhuvanLightningProvider._text_features(
+        "flash_count: 12\nflash_density: 0.12\ncurrent: 18000"
+    )
+    assert features[0]["properties"]["flash_count"] == "12"
+    assert features[0]["properties"]["flash_density"] == "0.12"
+    assert features[0]["properties"]["current"] == "18000"
+
+
+def test_bhuvan_lightning_html_key_value_parser():
+    features = BhuvanLightningProvider._html_features(
+        "<table><tr><th>flash_count</th><td>12</td></tr>"
+        "<tr><th>current</th><td>18000</td></tr></table>"
+    )
+    assert features[0]["properties"]["flash_count"] == "12"
+    assert features[0]["properties"]["current"] == "18000"
+
+
+def test_bhuvan_lightning_geometry_only_response_is_not_usable():
+    gml = """<?xml version="1.0" encoding="UTF-8"?>
+    <msGMLOutput xmlns:gml="http://www.opengis.net/gml">
+      <grid_layer><gml:name>Bhuvan</gml:name>
+        <grid_feature>
+          <gml:boundedBy><gml:Box srsName="EPSG:4326">
+            <gml:coordinates>88.6,27.3 88.7,27.4</gml:coordinates>
+          </gml:Box></gml:boundedBy>
+        </grid_feature>
+      </grid_layer>
+    </msGMLOutput>"""
+    assert BhuvanLightningProvider._xml_features(gml) == []
+
+
+def test_bhuvan_lightning_empty_measurement_is_rejected():
+    import pytest
+
+    with pytest.raises(RuntimeError, match="no usable measurement"):
+        BhuvanLightningProvider._normalise_result(
+            [("grid", [{"properties": {}}])],
+            25.0,
+        )

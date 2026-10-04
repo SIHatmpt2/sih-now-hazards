@@ -40,6 +40,10 @@ class LightningResponse(BaseModel):
     peak_current_a:float|None=None
     flash_rate_per_min:float|None=None
     density_per_km2:float|None=None
+    strike_intensity:str|None=None
+    latest_observation_time:datetime|None=None
+    latest_latitude:float|None=None
+    latest_longitude:float|None=None
     warnings:list[str]=Field(default_factory=list)
 
 class WeatherResponse(BaseModel):

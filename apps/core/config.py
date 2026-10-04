@@ -42,6 +42,7 @@ class Settings(BaseSettings):
     # Optional separate key; falls back to ACCUWEATHER_API_KEY because the
     # Lightning REST endpoints use the same Bearer authentication format.
     accuweather_lightning_api_key: str | None = None
+    lightning_radius_km: float = Field(25.0, ge=5.0, le=100.0)
     accuweather_location_key_cache_ttl_seconds: int = Field(86400, ge=300, le=604800)
 
     # Existing generic weather settings retained for provider adapters.
@@ -56,8 +57,8 @@ class Settings(BaseSettings):
     radar_api_base_url: str = "https://api.rainviewer.com/public"
 
     # Lightning data source.
-    lightning_provider: str = "imd"
-    lightning_api_base_url: str = "https://api.imd.gov.in"
+    lightning_provider: str = "bhuvan"
+    lightning_api_base_url: str = "https://bhuvan-ras2.nrsc.gov.in/cgi-bin/light.exe"
     lightning_api_key: str | None = None
 
     request_timeout_seconds: float = Field(15.0, ge=2, le=60)

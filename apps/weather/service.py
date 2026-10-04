@@ -10,7 +10,7 @@ from apps.core.schemas import FeatureBundle
 from apps.weather.accuweather import AccuWeatherProvider
 from apps.weather.imd import IMDProvider
 from apps.weather.open_meteo import OpenMeteoProvider
-from apps.weather.lightning import AccuWeatherLightningProvider
+from apps.weather.lightning import BhuvanLightningProvider
 from apps.weather.schemas import WeatherPoint, WeatherResponse
 
 
@@ -20,7 +20,7 @@ class WeatherService:
         self.imd = IMDProvider()
         self.accuweather = AccuWeatherProvider()
         self.open_meteo = OpenMeteoProvider()
-        self.lightning = AccuWeatherLightningProvider()
+        self.lightning = BhuvanLightningProvider()
         self.cache = RedisCache()
 
     async def get(self, latitude: float, longitude: float, hours: int = 6):
@@ -72,7 +72,7 @@ class WeatherService:
                 try:
                     lightning_result = await self.lightning.fetch(latitude, longitude)
                 except Exception as exc:
-                    warnings.append(f"AccuWeather Lightning unavailable: {exc}")
+                    warnings.append(f"Bhuvan Lightning unavailable: {exc}")
 
             if current is None:
                 raise RuntimeError(

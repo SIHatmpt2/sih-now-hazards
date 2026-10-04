@@ -8,7 +8,9 @@ from apps.risk.model import RiskEngine
 from apps.weather.service import WeatherService,point_to_features
 class RiskService:
     def __init__(self):self.engine=RiskEngine();self.weather=WeatherService()
-    async def build_features(self,lat,lon):return point_to_features((await self.weather.get(lat,lon,1)).current,lat,lon)
+    async def build_features(self,lat,lon):
+        weather=await self.weather.get(lat,lon,1)
+        return point_to_features(weather.current,lat,lon,weather.lightning)
     async def score(self,lat,lon,horizon,features=None):
         f=features or await self.build_features(lat,lon)
         if abs(f.latitude-lat)>.001 or abs(f.longitude-lon)>.001:raise ValueError("Feature coordinates do not match request coordinates")

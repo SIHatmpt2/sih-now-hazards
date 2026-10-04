@@ -10,14 +10,71 @@ return a queryable lightning response, the caller gets a controlled error.
 from __future__ import annotations
 
 import math
+import re
 import xml.etree.ElementTree as ET
 from datetime import UTC, datetime
+from html.parser import HTMLParser
 from typing import Any
 
 import httpx
 
 from apps.core.config import get_settings
 from apps.weather.schemas import LightningResponse
+
+
+class _KeyValueHTMLParser(HTMLParser):
+    """Extract simple two-column key/value tables from WMS HTML output."""
+    def __init__(self):
+        super().__init__()
+        self.rows: list[list[str]] = []
+        self._cells: list[str] | None = None
+        self._cell_text: list[str] = []
+
+    def handle_starttag(self, tag: str, attrs):
+        tag = tag.lower()
+        if tag == "tr":
+            self._cells = []
+        elif tag in ("td", "th") and self._cells is not None:
+            self._cell_text = []
+
+    def handle_data(self, data: str):
+        if self._cells is not None:
+            self._cell_text.append(data)
+
+    def handle_endtag(self, tag: str):
+        tag = tag.lower()
+        if tag in ("td", "th") and self._cells is not None:
+            self._cells.append(" ".join("".join(self._cell_text).split()))
+            self._cell_text = []
+        elif tag == "tr" and self._cells is not None:
+            if self._cells:
+                self.rows.append(self._cells)
+            self._cells = None
+            self._cell_text = []
+
+
+def _parse_key_value_text(raw_text: str) -> list[dict[str, Any]]:
+    properties: dict[str, Any] = {}
+    for raw_line in raw_text.splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#"):
+            continue
+        match = re.match(r"^\s*([^:=\t]{2,80})\s*(?::|=|\t)\s*(.*?)\s*$", line)
+        if match:
+            key, value = match.groups()
+            if key and value:
+                properties[key.strip()] = value.strip()
+    return [{"properties": properties}] if properties else []
+
+
+def _parse_key_value_html(raw_text: str) -> list[dict[str, Any]]:
+    parser = _KeyValueHTMLParser()
+    parser.feed(raw_text)
+    properties: dict[str, Any] = {}
+    for row in parser.rows:
+        if len(row) >= 2 and row[0] and row[1]:
+            properties[row[0]] = row[1]
+    return [{"properties": properties}] if properties else []
 
 
 class BhuvanLightningProvider:
@@ -130,6 +187,14 @@ class BhuvanLightningProvider:
         return []
 
     @classmethod
+    def _text_features(cls, raw_text: str) -> list[dict[str, Any]]:
+        return _parse_key_value_text(raw_text)
+
+    @classmethod
+    def _html_features(cls, raw_text: str) -> list[dict[str, Any]]:
+        return _parse_key_value_html(raw_text)
+
+    @classmethod
     def _xml_features(cls, raw_text: str) -> list[dict[str, Any]]:
         root = ET.fromstring(raw_text)
         if cls._local_name(root.tag) in ("serviceexceptionreport", "serviceexception"):
@@ -220,8 +285,17 @@ class BhuvanLightningProvider:
         response.raise_for_status()
 
         raw_text = response.text.lstrip()
-        if "<serviceexception" in raw_text.lower() or "<exceptionreport" in raw_text.lower():
+        lowered = raw_text.lower()
+        if "<serviceexception" in lowered or "<exceptionreport" in lowered or "serviceexceptionreport" in lowered:
             return [], False
+
+        if info_format == "text/plain":
+            features = cls._text_features(response.text)
+            return features, bool(features)
+
+        if info_format == "text/html":
+            features = cls._html_features(response.text)
+            return features, bool(features)
 
         if "json" in response.headers.get("content-type", "").lower() or info_format == "application/json":
             try:
@@ -348,16 +422,20 @@ class BhuvanLightningProvider:
                     if coordinates:
                         latest_latitude, latest_longitude = coordinates
 
+        warnings: list[str] = []
+
         if density is None and count is not None and count_layer == "grid":
-            # Bhuvan's lightning analysis grid is published at 10 km x 10 km.
             density = count / 100.0
+            warnings.append("Lightning density is derived from a 10 km x 10 km Bhuvan grid count.")
 
         if flash_rate is None and count is not None and count_layer == "lighthourly":
             flash_rate = count / 60.0
+            warnings.append("Lightning flash rate is the hourly mean derived from the Bhuvan hourly strike count.")
+
+        if count is None and density is None and flash_rate is None and peak_current is None and intensity is None:
+            raise RuntimeError("Bhuvan Lightning returned no usable measurement attributes")
 
         strike_count = int(round(count)) if count is not None else 0
-        if intensity is None:
-            intensity = "Observed" if (peak_current is not None or strike_count > 0) else "None"
 
         return LightningResponse(
             provider=cls.name,
@@ -372,6 +450,7 @@ class BhuvanLightningProvider:
             latest_longitude=latest_longitude,
             flash_rate_per_min=flash_rate,
             density_per_km2=density,
+            warnings=warnings,
         )
 
     async def fetch(
@@ -430,26 +509,40 @@ class BhuvanLightningProvider:
 
             for layer in selected_layers:
                 try:
-                    features, parsed = await self._get_feature_info(
-                        client,
-                        layer,
-                        latitude,
-                        longitude,
-                        radius,
+                    parsed = False
+                    features: list[dict[str, Any]] = []
+
+                    for info_format in (
+                        "text/plain",
+                        "text/html",
+                        "application/vnd.ogc.gml",
                         "application/json",
-                    )
-                    if not parsed:
-                        features, parsed = await self._get_feature_info(
-                            client,
-                            layer,
-                            latitude,
-                            longitude,
-                            radius,
-                            "application/vnd.ogc.gml",
-                        )
+                    ):
+                        try:
+                            candidate_features, candidate_parsed = await self._get_feature_info(
+                                client,
+                                layer,
+                                latitude,
+                                longitude,
+                                radius,
+                                info_format,
+                            )
+                        except Exception as exc:
+                            query_errors.append(f"{layer} ({info_format}): {exc}")
+                            continue
+
+                        if candidate_parsed:
+                            features = candidate_features
+                            parsed = True
+                            break
+
                     if parsed:
-                        successful_query = True
                         results.append((layer.lower(), features))
+                        try:
+                            self._normalise_result(results, radius)
+                        except RuntimeError:
+                            continue
+                        successful_query = True
                 except Exception as exc:
                     query_errors.append(f"{layer}: {exc}")
 

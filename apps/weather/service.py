@@ -129,7 +129,7 @@ def cloud_type_from_weather(p: WeatherPoint):
     return "Partly Cloudy"
 
 
-def point_to_features(p: WeatherPoint, latitude, longitude):
+def point_to_features(p: WeatherPoint, latitude, longitude, lightning=None):
     ts = p.timestamp if p.timestamp.tzinfo else p.timestamp.replace(tzinfo=UTC)
     return FeatureBundle(
         latitude=latitude,
@@ -146,6 +146,21 @@ def point_to_features(p: WeatherPoint, latitude, longitude):
         wind_direction_deg=p.wind_direction_deg,
         wind_gust_kmh=p.wind_gust_kmh,
         weather_code=p.weather_code,
+        lightning_flash_rate_per_min=(
+            lightning.flash_rate_per_min
+            if lightning is not None
+            else None
+        ),
+        lightning_density_per_km2=(
+            lightning.density_per_km2
+            if lightning is not None
+            else None
+        ),
+        lightning_strike_intensity=(
+            lightning.peak_current_a
+            if lightning is not None
+            else None
+        ),
         cloud_direction_deg=p.wind_direction_deg,
         cloud_velocity_kmh=p.wind_speed_kmh,
         # Cloud type requires satellite/cloud-classification data; do not
